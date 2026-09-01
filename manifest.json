@@ -1,8 +1,8 @@
 {
-  "name": "Fraternal & Civic Community Engine v2.2",
-  "short_name": "FraternalEngine",
-  "description": "Open-source community platform with live feed bridge, anti-blocker scraper, and Stripe payments.",
-  "start_url": "./index.html",
+  "name": "VEFA Fraternal & Civic Platform",
+  "short_name": "VEFA Community",
+  "version": "2.4.0",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#070d18",
   "theme_color": "#0a192f",

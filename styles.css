@@ -1,7 +1,7 @@
 /* ==========================================================================
-   VEFA: FRATERNAL & CIVIC COMMUNITY ENGINE (VERSION 2.2.3 - MASTERWORK)
+   VEFA: FRATERNAL & CIVIC COMMUNITY ENGINE (VERSION 2.4.0 - ENTERPRISE EDITION)
    Stylesheet: styles.css
-   2026/2027 Standards • Senior/Elderly Accessibility • Mobile-First Ergonomics
+   2026/2027 Standards • Senior Accessibility Suite • Mobile Ergonomics
    ========================================================================== */
 
 :root {
@@ -52,20 +52,12 @@
   --font-mono: 'Fira Code', 'Consolas', 'Courier New', monospace;
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Touch Target Minimum (2026/2027 Elderly Standards) */
   --min-touch-target: 48px;
 }
 
-/* ==========================================================================
-   ELDERLY & SENIOR-FRIENDLY ACCESSIBILITY MODES (LARGE PRINT & HIGH CONTRAST)
-   ========================================================================== */
-body.font-size-large {
-  font-size: 18px;
-}
-body.font-size-xlarge {
-  font-size: 21px;
-}
+/* Senior Accessibility Modes */
+body.font-size-large { font-size: 18px; }
+body.font-size-xlarge { font-size: 21px; }
 body.high-contrast-mode {
   --bg-main: #000000;
   --bg-surface: #0a0a0a;
@@ -103,9 +95,7 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
 .text-emerald { color: var(--emerald-green) !important; }
 .text-cyan { color: var(--cyan-blue) !important; }
 
-/* ==========================================================================
-   SENIOR ACCESSIBILITY CONTROL BAR (TOP BAR)
-   ========================================================================== */
+/* Senior Accessibility Top Bar */
 .senior-access-bar {
   background: #050a12;
   border-bottom: 1px solid var(--border-subtle);
@@ -117,12 +107,7 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
   color: var(--text-secondary);
 }
 
-.access-btn-group {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
+.access-btn-group { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
 .access-pill {
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-subtle);
@@ -144,9 +129,7 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
   border-color: var(--gold-accent);
 }
 
-/* ==========================================================================
-   PERSISTENT VEFA DEMO TOP TOOLBAR
-   ========================================================================== */
+/* Persistent Top Toolbar */
 .vefa-demo-toolbar {
   background: linear-gradient(90deg, #070d18, #0f1c30, #172a45);
   border-bottom: 2px solid var(--gold-accent);
@@ -162,21 +145,8 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
   flex-wrap: wrap;
 }
 
-.vefa-toolbar-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.84rem;
-  color: var(--gold-light);
-  font-weight: 700;
-}
-
-.vefa-toolbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
+.vefa-toolbar-brand { display: flex; align-items: center; gap: 0.5rem; font-size: 0.84rem; color: var(--gold-light); font-weight: 700; }
+.vefa-toolbar-actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 
 .toolbar-btn {
   background: var(--bg-surface-elevated);
@@ -207,9 +177,7 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
   font-weight: 700;
 }
 
-/* ==========================================================================
-   OFFICER & CHAIR ADMIN FLOATING ACTION BAR
-   ========================================================================== */
+/* Officer Floating Action Bar */
 .officer-admin-bar {
   background: linear-gradient(90deg, #1e1b4b, #312e81);
   border-bottom: 2px solid var(--royal-purple);
@@ -224,9 +192,39 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
 }
 .officer-admin-bar.active { display: flex; }
 
-/* ==========================================================================
-   MANDATORY LANDING GATEWAY POPUP MODAL
-   ========================================================================== */
+/* Admin Inline Control Badges */
+.admin-card-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: none;
+  gap: 0.35rem;
+  z-index: 10;
+}
+body.admin-mode-active .admin-card-controls {
+  display: flex;
+}
+.admin-control-btn {
+  background: rgba(15, 28, 48, 0.92);
+  border: 1px solid var(--gold-accent);
+  color: var(--gold-accent);
+  font-size: 0.74rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 700;
+}
+.admin-control-btn:hover {
+  background: var(--gold-accent);
+  color: #070d18;
+}
+.admin-control-btn.delete:hover {
+  background: var(--crimson-red);
+  color: #fff;
+  border-color: var(--crimson-red);
+}
+
+/* Mandatory Landing Gateway Popup Modal */
 .landing-gateway-backdrop {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -283,14 +281,10 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
   background: linear-gradient(180deg, rgba(212, 175, 55, 0.12), rgba(22, 38, 63, 0.9));
 }
 
-/* ==========================================================================
-   MOBILE-FIRST BOTTOM NAVIGATION BAR (2026/2027 ERGONOMIC THUMB BAR)
-   ========================================================================== */
+/* Mobile-First Bottom Navigation Bar */
 .mobile-bottom-nav {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0; left: 0; right: 0;
   background: var(--bg-surface);
   border-top: 2px solid var(--gold-accent);
   display: flex;
@@ -314,18 +308,13 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
   border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
 }
-.mobile-nav-item span:first-child {
-  font-size: 1.4rem;
-  margin-bottom: 0.15rem;
-}
+.mobile-nav-item span:first-child { font-size: 1.4rem; margin-bottom: 0.15rem; }
 .mobile-nav-item:hover, .mobile-nav-item.active {
   color: var(--gold-accent);
   background: rgba(212, 175, 55, 0.1);
 }
 
-/* ==========================================================================
-   DEVELOPER (DEVOPS) HYPER-COCKPIT FULLSCREEN CONSOLE
-   ========================================================================== */
+/* Developer (DevOps) Hyper-Cockpit */
 .devops-console-view {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -414,9 +403,7 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
   overflow-y: auto;
 }
 
-/* ==========================================================================
-   TOURNAMENTS & CARDS
-   ========================================================================== */
+/* Tournaments & Leaderboard */
 .tournament-card {
   background: var(--bg-glass-card);
   border: 2px solid var(--border-medium);
@@ -453,7 +440,7 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
   border-bottom: 1px solid var(--border-subtle);
 }
 
-/* Interactive Option Cards (Wizard & Selectors) */
+/* Interactive Option Cards */
 .kit-item-row, .selectable-card {
   background: var(--bg-surface-elevated);
   border: 2px solid var(--border-subtle);
@@ -470,51 +457,30 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
   position: relative;
   overflow: hidden;
 }
-
 .kit-item-row:hover, .selectable-card:hover {
   border-color: var(--gold-hover);
   background: rgba(212, 175, 55, 0.08);
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm), var(--shadow-gold);
 }
-
 .kit-item-row.selected, .selectable-card.selected {
   border-color: var(--gold-accent);
   background: rgba(212, 175, 55, 0.14);
   box-shadow: 0 0 20px var(--gold-glow);
 }
-
 .kit-item-row.selected::after, .selectable-card.selected::after {
   content: '✓ Selected';
   position: absolute;
-  top: 8px;
-  right: 8px;
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #070d18;
-  background: var(--gold-accent);
-  padding: 0.15rem 0.45rem;
-  border-radius: var(--radius-full);
+  top: 8px; right: 8px;
+  font-size: 0.68rem; font-weight: 700;
+  color: #070d18; background: var(--gold-accent);
+  padding: 0.15rem 0.45rem; border-radius: var(--radius-full);
   text-transform: uppercase;
 }
 
-.kit-item-info {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  flex: 1;
-}
-
-.kit-item-info h4 {
-  font-size: 1.05rem;
-  font-weight: 700;
-  margin-bottom: 0.15rem;
-}
-
-.kit-item-info p {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
+.kit-item-info { display: flex; align-items: center; gap: 0.85rem; flex: 1; }
+.kit-item-info h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.15rem; }
+.kit-item-info p { font-size: 0.8rem; color: var(--text-secondary); }
 
 /* Pill / Tab Buttons */
 .pill-btn {
@@ -530,10 +496,7 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
   transition: all var(--transition-fast);
   text-align: center;
 }
-.pill-btn:hover {
-  border-color: var(--gold-accent);
-  color: var(--text-primary);
-}
+.pill-btn:hover { border-color: var(--gold-accent); color: var(--text-primary); }
 .pill-btn.active {
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
   border-color: var(--gold-accent);
@@ -548,7 +511,6 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
   gap: 1.2rem;
   margin: 1.5rem 0;
 }
-
 .post-setup-action-card {
   background: var(--bg-surface-elevated);
   border: 2px solid var(--border-subtle);
@@ -568,24 +530,9 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
   background: rgba(212, 175, 55, 0.1);
 }
 
-/* Transparent Demo Placeholder Warning Banner */
-.demo-badge-banner {
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid var(--amber-orange);
-  color: var(--amber-orange);
-  font-size: 0.78rem;
-  font-weight: 700;
-  padding: 0.45rem 0.85rem;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 0.8rem;
-}
-
 /* Glass Panels */
 .glass-panel { background: var(--bg-glass); backdrop-filter: blur(14px); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
-.glass-card { background: var(--bg-glass-card); backdrop-filter: blur(12px); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); transition: transform var(--transition-fast), box-shadow var(--transition-fast); }
+.glass-card { background: var(--bg-glass-card); backdrop-filter: blur(12px); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); transition: transform var(--transition-fast), box-shadow var(--transition-fast); position: relative; }
 .glass-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md), var(--shadow-gold); border-color: var(--border-medium); }
 
 /* Main Header */
@@ -690,7 +637,7 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
 .pin-note-card:nth-child(even) { transform: rotate(1.5deg); }
 .pushpin-head { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); font-size: 1.2rem; }
 
-/* TV Kiosk View with Carousel */
+/* TV Kiosk View */
 .tv-kiosk-view { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #060d17; z-index: 5000; padding: 2.5rem; display: none; flex-direction: column; color: #f8fafc; }
 .tv-kiosk-view.active { display: flex; }
 .tv-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold-accent); padding-bottom: 1.25rem; margin-bottom: 2rem; }
@@ -719,7 +666,6 @@ h1, h2, h3, h4 { font-family: var(--font-serif); letter-spacing: 0.02em; color: 
 .footer-grid { max-width: 1400px; margin: 0 auto 2.5rem; display: grid; grid-template-columns: 1.5fr repeat(3, 1fr); gap: 2.2rem; }
 .footer-bottom { max-width: 1400px; margin: 0 auto; padding-top: 1.4rem; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 0.4rem; align-items: center; text-align: center; font-size: 0.86rem; color: var(--text-muted); }
 
-/* Responsive Ergonomics */
 @media (max-width: 900px) {
   .hero-section { grid-template-columns: 1fr; }
   .gateway-options-grid { grid-template-columns: 1fr; }

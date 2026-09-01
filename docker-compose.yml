@@ -3,36 +3,31 @@ version: '3.8'
 services:
   web:
     image: php:8.2-apache
+    container_name: vefa_community_engine
+    restart: always
     ports:
       - "8080:80"
     volumes:
       - ./:/var/www/html
     environment:
       - DB_HOST=db
-      - DB_NAME=fraternal_db
-      - DB_USER=lodge_user
-      - DB_PASS=lodge_secret
+      - DB_NAME=vefa_community_db
+      - DB_USER=vefa_user
+      - DB_PASS=vefa_secret_pass
     depends_on:
       - db
 
   db:
-    image: mariadb:10.11
+    image: mariadb:10.6
+    container_name: vefa_mariadb
+    restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=root_secret
-      - MYSQL_DATABASE=fraternal_db
-      - MYSQL_USER=lodge_user
-      - MYSQL_PASSWORD=lodge_secret
+      MYSQL_ROOT_PASSWORD: root_secret_pass
+      MYSQL_DATABASE: vefa_community_db
+      MYSQL_USER: vefa_user
+      MYSQL_PASSWORD: vefa_secret_pass
     volumes:
       - db_data:/var/lib/mysql
-
-  phpmyadmin:
-    image: phpmyadmin:latest
-    ports:
-      - "8081:80"
-    environment:
-      - PMA_HOST=db
-    depends_on:
-      - db
 
 volumes:
   db_data:

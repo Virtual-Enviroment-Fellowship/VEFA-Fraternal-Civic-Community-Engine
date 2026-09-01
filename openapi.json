@@ -1,39 +1,124 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Fraternal & Civic Community Engine API",
-    "version": "2.2.0",
-    "description": "REST API specification with Live Feed Bridge, Stripe Checkout, and 2026 Anti-Blocker Scraper."
+    "title": "VEFA Fraternal & Civic Community Platform API",
+    "version": "2.4.0",
+    "description": "Hardened REST API and Autonomous AI Agent Tool Calling Specification for American Civic & Fraternal Organizations.",
+    "contact": {
+      "name": "VEFA Platform Administrators",
+      "email": "admin@vefa.club"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
   },
+  "servers": [
+    {
+      "url": "https://yourlodge.org/api",
+      "description": "Production Web Server"
+    },
+    {
+      "url": "http://localhost:8080/api",
+      "description": "Local WSL2 / Docker Development"
+    }
+  ],
   "paths": {
-    "/api/scrape.php": {
-      "post": {
-        "summary": "2026 Anti-Blocker Asset & Metadata Scraper",
-        "responses": { "200": { "description": "JSON containing extracted title, logo, banner, and description" } }
-      }
-    },
-    "/api/feed_sync.php": {
+    "/health.php": {
       "get": {
-        "summary": "Incoming RSS/Atom feed synchronization",
-        "responses": { "200": { "description": "Array of parsed feed items" } }
+        "summary": "System Health & Diagnostics",
+        "description": "Returns runtime diagnostics, database status, and module health in real-time.",
+        "responses": {
+          "200": {
+            "description": "Health status report"
+          }
+        }
       }
     },
-    "/api/feed.php": {
+    "/deposits.php": {
       "get": {
-        "summary": "Outgoing RSS 2.0 & JSON feed syndication",
-        "responses": { "200": { "description": "Syndicated feed stream" } }
+        "summary": "List $150 Hall Deposits or Generate Legal Rental Agreement",
+        "parameters": [
+          {
+            "name": "action",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["list", "contract"] }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Deposit ledger or contract details" }
+        }
+      },
+      "post": {
+        "summary": "Record $150 Hall Reservation Deposit",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "client_name": { "type": "string" },
+                  "event_date": { "type": "string" },
+                  "payment_method": { "type": "string" }
+                },
+                "required": ["client_name", "event_date"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Deposit registered successfully" }
+        }
       }
     },
-    "/api/stripe.php": {
+    "/exchange.php": {
+      "get": {
+        "summary": "List Community Exchange Listings",
+        "responses": { "200": { "description": "List of active items" } }
+      },
       "post": {
-        "summary": "Create Stripe Checkout session for $150 hall deposits",
-        "responses": { "200": { "description": "Stripe session and checkout URL" } }
+        "summary": "Create, Edit, or Delete Exchange Listing",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": { "type": "string", "enum": ["create", "edit", "delete"] },
+                  "id": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Operation successful" } }
       }
     },
-    "/api/deposits.php": {
+    "/twilio.php": {
       "post": {
-        "summary": "Record $150 flat hall rental reservation deposit",
-        "responses": { "200": { "description": "Deposit confirmed" } }
+        "summary": "Dispatch 24-hr Volunteer Shift Reminders via Twilio",
+        "responses": { "200": { "description": "SMS reminders queued" } }
+      }
+    },
+    "/calendar.php": {
+      "get": {
+        "summary": "iCalendar Feed (.ics)",
+        "responses": { "200": { "description": "ICS formatted calendar event feed" } }
+      }
+    },
+    "/scrape.php": {
+      "post": {
+        "summary": "Anti-Blocker Metadata Scraper with SSRF Filter",
+        "responses": { "200": { "description": "Scraped metadata" } }
       }
     }
   }

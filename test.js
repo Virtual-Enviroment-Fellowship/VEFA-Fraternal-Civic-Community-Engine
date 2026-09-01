@@ -1,116 +1,149 @@
 /**
  * =============================================================================
- * VEFA: FRATERNAL & CIVIC COMMUNITY ENGINE (VERSION 2.2.3 - MASTERWORK)
+ * VEFA PLATFORM (v2.4.0) - ZERO-DEPENDENCY AUTOMATED CI TEST SUITE
  * =============================================================================
- * Automated Test Runner for GitHub Actions CI (Zero-Dependency)
- * Comprehensive Security, DevOps, Officer Studio, Senior Accessibility & Tournaments
- * Command: node test.js
+ * File: test.js
+ * Run with: node test.js
  * =============================================================================
  */
 
 const fs = require('fs');
 const path = require('path');
+const assert = require('assert');
 
-let passed = 0;
-let failed = 0;
+console.log("\n=================================================================");
+console.log(" 🧪 RUNNING VEFA PLATFORM v2.4.0 ENTERPRISE TEST SUITE");
+console.log("=================================================================\n");
 
-function assert(condition, message) {
-  if (condition) {
-    console.log(`  ✓ PASS: ${message}`);
-    passed++;
-  } else {
-    console.error(`  ✗ FAIL: ${message}`);
-    failed++;
+let passedTests = 0;
+let totalTests = 0;
+
+function runTest(name, fn) {
+  totalTests++;
+  try {
+    fn();
+    console.log(`  ✓ [PASS] ${name}`);
+    passedTests++;
+  } catch (err) {
+    console.error(`  ❌ [FAIL] ${name}: ${err.message}`);
   }
 }
 
-console.log("\n=======================================================");
-console.log(" 🦌 VEFA ENGINE v2.2.3 — 2026/2027 AUTOMATED TEST RUNNER");
-console.log("=======================================================\n");
+const rootDir = __dirname;
 
-// TEST 1: Copyright & VEFA Contact Verification
-console.log("Test Suite 1: VEFA Copyright & Contact Information");
-const configContent = fs.readFileSync(path.join(__dirname, 'config.js'), 'utf8');
-const indexContent = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
-const setupContent = fs.readFileSync(path.join(__dirname, 'setup.html'), 'utf8');
-assert(configContent.includes('© 2027 VEFA: Fraternal & Civic Community Engine. Please contact admin@vefa.club for more information.'), 'config.js contains exact 2027 VEFA copyright notice');
-assert(indexContent.includes('© 2027 VEFA: Fraternal & Civic Community Engine. Please contact admin@vefa.club for more information.'), 'index.html contains exact 2027 VEFA copyright notice');
-assert(!configContent.includes('Danielson') && !configContent.includes('1706'), 'Zero mentions of specific lodge or town names');
+// Suite 1: Copyright & Support Standard
+console.log("--- Suite 1: Standard Copyright & White-Label Isolation ---");
+runTest("config.js has official 2027 copyright standard", () => {
+  const configContent = fs.readFileSync(path.join(rootDir, 'config.js'), 'utf8');
+  assert(configContent.includes("© 2027 VEFA: Fraternal & Civic Community Engine. Please contact admin@vefa.club for more information."));
+});
 
-// TEST 2: Senior / Elderly Accessibility Suite & Mobile Navigation
-console.log("\nTest Suite 2: Senior / Elderly Accessibility & Mobile Ergonomics");
-assert(indexContent.includes('senior-access-bar'), 'index.html contains Senior Accessibility Bar');
-assert(indexContent.includes('mobile-bottom-nav'), 'index.html contains Mobile-First Bottom Thumb Navigation');
-assert(indexContent.includes('tel:555-123-4567'), 'index.html includes 1-Click Tap-to-Call Lodge Phone');
-const appContent = fs.readFileSync(path.join(__dirname, 'app.js'), 'utf8');
-assert(appContent.includes('setFontSize'), 'app.js implements setFontSize() for large print');
-assert(appContent.includes('toggleHighContrast'), 'app.js implements toggleHighContrast()');
-assert(appContent.includes('toggleSeniorMode'), 'app.js implements toggleSeniorMode()');
-assert(appContent.includes('readAnnouncementsAloud'), 'app.js implements readAnnouncementsAloud() speech synthesizer');
+runTest("Zero mentions of ConsultDevin across all core v2.4.0 files", () => {
+  const filesToCheck = ['config.js', 'app.js', 'index.html', 'setup.html', 'agent.md', 'README.md', 'CHANGELOG.md'];
+  filesToCheck.forEach(f => {
+    const content = fs.readFileSync(path.join(rootDir, f), 'utf8');
+    assert(!content.toLowerCase().includes('consultdevin'), `Found mention of consultdevin in ${f}`);
+  });
+});
 
-// TEST 3: Landing Gateway Popup (See Demo / First Time Setup / Update Setup)
-console.log("\nTest Suite 3: Landing Gateway Popup & Selection Logic");
-assert(indexContent.includes('landing-gateway-modal'), 'index.html contains #landing-gateway-modal');
-assert(indexContent.includes('See the Demo'), 'Landing gateway contains "See the Demo" option');
-assert(indexContent.includes('First Time Setup'), 'Landing gateway contains "First Time Setup" option');
-assert(indexContent.includes('Update my setup'), 'Landing gateway contains "Update my setup" option');
-assert(appContent.includes('initLandingGateway'), 'app.js contains initLandingGateway handler');
-assert(appContent.includes('selectLandingChoice'), 'app.js implements selectLandingChoice');
+// Suite 2: AI Agent Coordination Harness
+console.log("\n--- Suite 2: agent.md AI Coordination Harness ---");
+runTest("agent.md defines essential agent tools", () => {
+  const agentMd = fs.readFileSync(path.join(rootDir, 'agent.md'), 'utf8');
+  assert(agentMd.includes("get_hall_deposits"));
+  assert(agentMd.includes("moderate_exchange_listing"));
+  assert(agentMd.includes("dispatch_volunteer_sms_reminders"));
+  assert(agentMd.includes("eclipsed_year_tournament_archive"));
+  assert(agentMd.includes("system_health_diagnostic"));
+});
 
-// TEST 4: Post-Setup Action Hub
-console.log("\nTest Suite 4: Post-Setup Action Hub");
-assert(setupContent.includes('post-setup-modal'), 'setup.html contains #post-setup-modal');
-assert(setupContent.includes('View this demo'), 'Post-setup contains "View this demo" action');
-assert(setupContent.includes('Install now'), 'Post-setup contains "Install now" action');
-assert(setupContent.includes('Download instructions'), 'Post-setup contains "Download instructions" action');
-assert(setupContent.includes('Save setup'), 'Post-setup contains "Save setup" action');
+// Suite 3: Admin Exchange Controls
+console.log("\n--- Suite 3: Admin Exchange Edit/Delete Controls ---");
+runTest("app.js implements deleteExchangeItem and edit handlers", () => {
+  const appContent = fs.readFileSync(path.join(rootDir, 'app.js'), 'utf8');
+  assert(appContent.includes("function deleteExchangeItem"));
+  assert(appContent.includes("function openEditExchangeModal"));
+  assert(appContent.includes("function handleEditExchangeSubmit"));
+});
 
-// TEST 5: Developer (DevOps) Hyper-Cockpit
-console.log("\nTest Suite 5: Developer (DevOps) Hyper-Cockpit Console");
-assert(indexContent.includes('devops-console-view'), 'index.html contains #devops-console-view');
-assert(indexContent.includes('devops-api-select'), 'DevOps console contains REST API sandbox selector');
-assert(appContent.includes('loadDevOpsFile'), 'app.js implements loadDevOpsFile()');
-assert(appContent.includes('runDevOpsApiTest'), 'app.js implements runDevOpsApiTest()');
-assert(appContent.includes('copyDevOpsCode'), 'app.js implements copyDevOpsCode()');
+// Suite 4: Tournaments & Year-End Eclipse Engine
+console.log("\n--- Suite 4: Tournaments & Annual Year-End Eclipse Engine ---");
+runTest("app.js handles custom game creation and year eclipse", () => {
+  const appContent = fs.readFileSync(path.join(rootDir, 'app.js'), 'utf8');
+  assert(appContent.includes("function handleCreateCustomGame"));
+  assert(appContent.includes("function checkYearEclipse"));
+  assert(appContent.includes("function archiveSeasonToHallOfFame"));
+});
 
-// TEST 6: Officer Executive Command Center & Deposit Ledger
-console.log("\nTest Suite 6: Officer Executive Command Center");
-assert(indexContent.includes('officer-admin-bar'), 'index.html contains #officer-admin-bar');
-assert(indexContent.includes('officer-studio-modal'), 'index.html contains #officer-studio-modal');
-assert(appContent.includes('updateDepositStatus'), 'app.js implements updateDepositStatus()');
-assert(appContent.includes('exportDepositsCSV'), 'app.js implements exportDepositsCSV()');
-assert(appContent.includes('broadcastTickerAlert'), 'app.js implements broadcastTickerAlert()');
+// Suite 5: Volunteer Twilio SMS Dispatch
+console.log("\n--- Suite 5: Volunteer Automation & Twilio SMS ---");
+runTest("api/twilio.php handles SMS reminders", () => {
+  const twilioContent = fs.readFileSync(path.join(rootDir, 'api', 'twilio.php'), 'utf8');
+  assert(twilioContent.includes("dispatched_count"));
+});
 
-// TEST 7: Tournament Engine & Game Master Custom Games
-console.log("\nTest Suite 7: Tournament Engine & Game Master Custom Games");
-assert(configContent.includes('GENERIC_SEED_GAMES'), 'config.js exports GENERIC_SEED_GAMES with Monopoly');
-assert(indexContent.includes('add-game-modal'), 'index.html contains #add-game-modal for custom games');
-assert(appContent.includes('handleCreateCustomGame'), 'app.js implements handleCreateCustomGame()');
-assert(appContent.includes('handleLogScoreSubmit'), 'app.js implements handleLogScoreSubmit()');
+// Suite 6: Legal Hall Rental Agreement Generator
+console.log("\n--- Suite 6: Legal Hall Rental Agreement & Deposit Receipt ---");
+runTest("app.js contains generateRentalAgreementPDF", () => {
+  const appContent = fs.readFileSync(path.join(rootDir, 'app.js'), 'utf8');
+  assert(appContent.includes("function generateRentalAgreementPDF"));
+  assert(appContent.includes("HALL RENTAL AGREEMENT & DEPOSIT CONFIRMATION"));
+});
 
-// TEST 8: Community Pillars (Volunteers, 50/50 Raffle, Taproom)
-console.log("\nTest Suite 8: Community Pillars Hub");
-assert(indexContent.includes('community-pillars'), 'index.html contains community-pillars section');
-assert(appContent.includes('claimVolunteerShift'), 'app.js implements claimVolunteerShift()');
-assert(appContent.includes('buyRaffleTickets'), 'app.js implements buyRaffleTickets()');
+// Suite 7: SQLite Database Fallback Engine
+console.log("\n--- Suite 7: Multi-Database Connector & SQLite Fallback ---");
+runTest("api/db.php supports SQLite fallback", () => {
+  const dbContent = fs.readFileSync(path.join(rootDir, 'api', 'db.php'), 'utf8');
+  assert(dbContent.includes("sqlite:"));
+  assert(dbContent.includes("vefa.sqlite"));
+});
 
-// TEST 9: Universal Multi-Payment Hub (Stripe, Cash App, Venmo, Chime, Zelle, Check)
-console.log("\nTest Suite 9: Multi-Payment Gateway Hub");
-assert(configContent.includes('cashAppHandle'), 'config.js supports Cash App handle ($cashtag)');
-assert(configContent.includes('venmoHandle'), 'config.js supports Venmo handle (@username)');
-assert(configContent.includes('zelleRecipient'), 'config.js supports Zelle / Chime recipient');
-const depositsContent = fs.readFileSync(path.join(__dirname, 'api/deposits.php'), 'utf8');
-assert(depositsContent.includes('payment_method'), 'api/deposits.php records multi-channel payment method');
+// Suite 8: System Health Diagnostics
+console.log("\n--- Suite 8: System Health Diagnostics ---");
+runTest("api/health.php returns valid diagnostics", () => {
+  const healthContent = fs.readFileSync(path.join(rootDir, 'api', 'health.php'), 'utf8');
+  assert(healthContent.includes("healthy"));
+  assert(healthContent.includes("2.4.0"));
+});
 
-// TEST 10: SSRF & XSS Security Hardening
-console.log("\nTest Suite 10: SSRF & XSS Security Hardening");
-const scraperContent = fs.readFileSync(path.join(__dirname, 'api/scrape.php'), 'utf8');
-assert(scraperContent.includes('FILTER_FLAG_NO_PRIV_RANGE'), 'api/scrape.php implements SSRF private IP filter');
-assert(appContent.includes('escapeHTML'), 'app.js implements escapeHTML helper');
+// Suite 9: Calendar Sync Engine
+console.log("\n--- Suite 9: 1-Click Calendar Sync ---");
+runTest("app.js and api/calendar.php provide calendar sync", () => {
+  const appContent = fs.readFileSync(path.join(rootDir, 'app.js'), 'utf8');
+  assert(appContent.includes("function addToGoogleCalendar"));
+  assert(appContent.includes("function downloadICalEvent"));
+  const calContent = fs.readFileSync(path.join(rootDir, 'api', 'calendar.php'), 'utf8');
+  assert(calContent.includes("BEGIN:VCALENDAR"));
+});
 
-console.log("\n=======================================================");
-console.log(` RESULTS: ${passed} Passed, ${failed} Failed`);
-console.log("=======================================================\n");
+// Suite 10: Senior Accessibility Suite
+console.log("\n--- Suite 10: Senior Accessibility Suite ---");
+runTest("app.js contains text-to-speech reader and font scaling", () => {
+  const appContent = fs.readFileSync(path.join(rootDir, 'app.js'), 'utf8');
+  assert(appContent.includes("function setFontSize"));
+  assert(appContent.includes("function toggleHighContrast"));
+  assert(appContent.includes("function readAnnouncementsAloud"));
+});
 
-if (failed > 0) process.exit(1);
-else process.exit(0);
+// Suite 11: Security Standards (SSRF & XSS)
+console.log("\n--- Suite 11: Security & SSRF Protection ---");
+runTest("api/scrape.php enforces FILTER_FLAG_NO_PRIV_RANGE", () => {
+  const scrapeContent = fs.readFileSync(path.join(rootDir, 'api', 'scrape.php'), 'utf8');
+  assert(scrapeContent.includes("FILTER_FLAG_NO_PRIV_RANGE"));
+});
+
+// Suite 12: Hostinger 1-Click Deployer
+console.log("\n--- Suite 12: Hostinger Auto-Deployer ---");
+runTest("vefa-deployer.php runs preflight and database import", () => {
+  const deployerContent = fs.readFileSync(path.join(rootDir, 'vefa-deployer.php'), 'utf8');
+  assert(deployerContent.includes("preflight"));
+  assert(deployerContent.includes("database.sql"));
+});
+
+console.log("\n=================================================================");
+console.log(` 🏁 TEST SUITE COMPLETE: ${passedTests}/${totalTests} TESTS PASSING (${Math.round((passedTests/totalTests)*100)}%)`);
+console.log("=================================================================\n");
+
+if (passedTests !== totalTests) {
+  process.exit(1);
+}

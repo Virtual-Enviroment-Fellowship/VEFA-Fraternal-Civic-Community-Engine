@@ -1,51 +1,30 @@
 <?php
 /**
- * API: Outgoing RSS 2.0 & JSON Feed Syndicator
- * Exports active tag sale listings and auction lots for external websites
+ * =============================================================================
+ * VEFA PLATFORM (v2.4.0) - RSS / JSON SYNDICATION FEED
+ * =============================================================================
+ * File: api/feed.php
+ * =============================================================================
  */
-$format = strtolower($_GET['format'] ?? 'rss');
 
-$items = [
-    [
-        'title' => 'Solid Oak Rocking Chair (Tag Sale $35)',
-        'link' => 'https://example.com/#exchange',
-        'desc' => 'Solid hardwood American rocker with honey gloss finish. 100% proceeds benefit youth sports.',
-        'pubDate' => date(DATE_RSS)
-    ],
-    [
-        'title' => 'County Fair VIP Family Experience (Charity Auction $275)',
-        'link' => 'https://example.com/#auctions',
-        'desc' => '4 all-day fair admission passes and grandstand seating benefiting veterans.',
-        'pubDate' => date(DATE_RSS, strtotime('-1 day'))
-    ]
-];
+$format = $_GET['format'] ?? 'rss';
 
 if ($format === 'json') {
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
-        'title' => 'Lodge Community Exchange & Auctions Feed',
-        'home_page_url' => 'https://example.com',
-        'items' => $items
-    ], JSON_PRETTY_PRINT);
-    exit;
+        'title' => 'American Fraternal Lodge No. 100 Feed',
+        'items' => [
+            ['title' => 'Lodge Stated Meeting', 'date' => '2026-09-01', 'summary' => '1st and 3rd Tuesdays at 7:00 PM.'],
+            ['title' => 'Monopoly Tournament', 'date' => '2026-09-03', 'summary' => 'Thursday at 6:30 PM in Social Quarters.']
+        ]
+    ]);
+} else {
+    header('Content-Type: application/rss+xml; charset=utf-8');
+    echo '<?xml version="1.0" encoding="UTF-8"?>';
+    echo '<rss version="2.0"><channel>';
+    echo '<title>American Fraternal Lodge No. 100</title>';
+    echo '<link>https://communitylodge100.org</link>';
+    echo '<description>Lodge Announcements and Community Events</description>';
+    echo '<item><title>Lodge Stated Meeting</title><description>1st and 3rd Tuesdays at 7:00 PM.</description></item>';
+    echo '</channel></rss>';
 }
-
-header('Content-Type: application/rss+xml; charset=utf-8');
-echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-?>
-<rss version="2.0">
-  <channel>
-    <title>Lodge Community Marketplace & Auctions</title>
-    <link>https://example.com</link>
-    <description>Live feed of tag sale bargains, giveaways, and charity auctions</description>
-    <language>en-us</language>
-    <?php foreach ($items as $item): ?>
-    <item>
-      <title><?= htmlspecialchars($item['title']) ?></title>
-      <link><?= htmlspecialchars($item['link']) ?></link>
-      <description><?= htmlspecialchars($item['desc']) ?></description>
-      <pubDate><?= $item['pubDate'] ?></pubDate>
-    </item>
-    <?php endforeach; ?>
-  </channel>
-</rss>
