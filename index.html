@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VEFA: Fraternal & Civic Community Engine | Version 2.2.3 (Masterwork Edition)</title>
-  <meta name="description" content="Open-source 2026/2027 community platform with Senior/Elderly Accessibility Suite, Mobile-First Thumb Navigation, DevOps Hyper-Cockpit, and Tournament Engine.">
+  <title>VEFA: Fraternal & Civic Community Engine | Version 2.3.1 (Refactored Release)</title>
+  <meta name="description" content="Open-source 2026/2027 community platform with Senior Accessibility, Rich Auctions, Free Giveaways, Historic Audio Tour, Tournaments, and Multi-Payment Hub.">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,14 +23,11 @@
   <aside class="vefa-demo-toolbar" id="vefa-demo-toolbar" aria-label="Demo Action Toolbar">
     <div class="vefa-toolbar-brand">
       <span>🏛️</span>
-      <span>VEFA Platform v2.2.3</span>
+      <span>VEFA Platform v2.3.1</span>
     </div>
     <div class="vefa-toolbar-actions">
-      <button class="toolbar-btn primary" onclick="installNow()">
+      <button class="toolbar-btn primary" onclick="openModal('install-options-modal')">
         <span>🚀</span> Install Now
-      </button>
-      <button class="toolbar-btn" onclick="downloadInstructions()">
-        <span>📥</span> Download Instructions
       </button>
       <button class="toolbar-btn" onclick="saveSetup()">
         <span>💾</span> Save Setup
@@ -41,7 +38,7 @@
     </div>
   </aside>
 
-  <!-- SENIOR / ELDERLY ACCESSIBILITY & QUICK CALL BAR (2026/2027 ACCESSIBILITY STANDARD) -->
+  <!-- SENIOR / ELDERLY ACCESSIBILITY & QUICK CALL BAR -->
   <div class="senior-access-bar" aria-label="Senior Accessibility Controls">
     <div class="access-btn-group">
       <span style="font-weight: 700; color: var(--gold-accent);">👓 Accessibility:</span>
@@ -59,7 +56,7 @@
     </div>
   </div>
 
-  <!-- OFFICER & CHAIR ADMIN FLOATING ACTION BAR (VISIBLE IN OFFICER ROLE) -->
+  <!-- OFFICER & CHAIR ADMIN FLOATING ACTION BAR -->
   <div class="officer-admin-bar" id="officer-admin-bar">
     <div style="display: flex; align-items: center; gap: 0.75rem;">
       <span style="font-size: 1.2rem;">⭐</span>
@@ -67,7 +64,10 @@
     </div>
     <div style="display: flex; gap: 0.5rem;">
       <button class="toolbar-btn primary" onclick="openOfficerStudio()">
-        <span>📊</span> Deposit Ledger & Layout Studio
+        <span>📊</span> Deposit Ledger & Officer Studio
+      </button>
+      <button class="toolbar-btn" onclick="generateTrusteeAuditReport()">
+        <span>📄</span> Trustee Audit Report
       </button>
       <button class="toolbar-btn" onclick="broadcastTickerAlert()">
         <span>🚨</span> Broadcast Alert
@@ -82,18 +82,24 @@
       <h2 style="font-size: 1.8rem; margin-bottom: 0.4rem; font-family: var(--font-serif); color: var(--gold-accent);">
         VEFA: Fraternal & Civic Community Engine
       </h2>
-      <p style="font-size: 0.95rem; color: var(--text-secondary); max-width: 620px; margin: 0 auto;">
+      <p style="font-size: 0.95rem; color: var(--text-secondary); max-width: 620px; margin: 0 auto 1.2rem;">
         Welcome! Please choose how you would like to proceed with the platform:
       </p>
 
+      <!-- 1-Tap Senior Mode Activator on Landing Gateway -->
+      <div style="background: rgba(212, 175, 55, 0.1); border: 1px dashed var(--gold-accent); border-radius: var(--radius-sm); padding: 0.6rem 1rem; margin-bottom: 1.2rem; display: inline-flex; align-items: center; gap: 0.75rem;">
+        <span style="font-size: 1.2rem;">👓</span>
+        <span style="font-size: 0.85rem; color: var(--gold-light);">Prefer Large Print & High Contrast?</span>
+        <button class="access-pill" style="background: var(--gold-accent); color: #070d18;" onclick="toggleSeniorMode()">Activate Senior Mode</button>
+      </div>
+
       <div class="gateway-options-grid">
-        <!-- OPTION 1: SEE THE DEMO -->
         <div class="gateway-option-card primary" onclick="selectLandingChoice('demo')">
           <div>
             <span style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">✨</span>
             <h3 style="font-size: 1.15rem; color: var(--gold-accent); margin-bottom: 0.3rem;">See the Demo</h3>
             <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.45;">
-              Explore the live lodge website with custom tournaments (Game Master), auctions, $150 deposit hub, and 15-sec TV kiosk.
+              Explore the full interactive lodge website with live auctions, free giveaways, tournaments, and $150 deposit hub.
             </p>
           </div>
           <button class="btn-primary" style="margin-top: 1.2rem; width: 100%; justify-content: center;">
@@ -101,7 +107,6 @@
           </button>
         </div>
 
-        <!-- OPTION 2: FIRST TIME SETUP -->
         <div class="gateway-option-card" onclick="selectLandingChoice('first_time')">
           <div>
             <span style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">🚀</span>
@@ -115,13 +120,12 @@
           </button>
         </div>
 
-        <!-- OPTION 3: UPDATE MY SETUP -->
         <div class="gateway-option-card" onclick="selectLandingChoice('update')">
           <div>
             <span style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">⚙️</span>
             <h3 style="font-size: 1.15rem; color: var(--royal-purple); margin-bottom: 0.3rem;">Update my setup</h3>
             <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.45;">
-              Load your current configuration to edit branding, Cash App/Venmo handles, Discord webhooks, or corkboard layout.
+              Load your current configuration to edit branding, Cash App/Venmo handles, Twilio SMS webhooks, or corkboard layout.
             </p>
           </div>
           <button class="btn-secondary" style="margin-top: 1.2rem; width: 100%; justify-content: center;">
@@ -148,16 +152,16 @@
       </div>
       <div style="display: flex; gap: 0.5rem;">
         <button class="toolbar-btn primary" onclick="copyDevOpsCode()">📋 Copy File</button>
-        <button class="toolbar-btn" onclick="saveSetup()">💾 Export Full Zip</button>
         <button class="btn-secondary" style="font-size: 0.76rem;" onclick="switchUserRole('guest', 'Community Neighbor', 'Visitor')">Exit DevOps Mode ✕</button>
       </div>
     </div>
 
     <div class="devops-console-body">
-      <!-- Left: File Explorer -->
       <div class="devops-sidebar">
         <h4 style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.75rem;">Platform Source Files</h4>
         <div class="devops-file-item active" data-file="config.js" onclick="loadDevOpsFile('config.js')">📄 config.js</div>
+        <div class="devops-file-item" data-file="agent.md" onclick="loadDevOpsFile('agent.md')">🤖 agent.md (AI Harness)</div>
+        <div class="devops-file-item" data-file="api/twilio.php" onclick="loadDevOpsFile('api/twilio.php')">📱 api/twilio.php</div>
         <div class="devops-file-item" data-file="api/scrape.php" onclick="loadDevOpsFile('api/scrape.php')">🐘 api/scrape.php</div>
         <div class="devops-file-item" data-file="api/stripe.php" onclick="loadDevOpsFile('api/stripe.php')">💳 api/stripe.php</div>
         <div class="devops-file-item" data-file="api/deposits.php" onclick="loadDevOpsFile('api/deposits.php')">🏦 api/deposits.php</div>
@@ -166,7 +170,6 @@
         <div class="devops-file-item" data-file="openapi.json" onclick="loadDevOpsFile('openapi.json')">⚡ openapi.json</div>
       </div>
 
-      <!-- Center: Code Viewer / Diff -->
       <div class="devops-main-editor">
         <div class="devops-editor-tabs">
           <span id="devops-active-file-title" style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--cyan-blue);">config.js</span>
@@ -175,7 +178,6 @@
         <div class="devops-code-container" id="devops-code-display"></div>
       </div>
 
-      <!-- Right: Interactive REST API Sandbox -->
       <div class="devops-right-panel">
         <h4 style="font-size: 0.78rem; color: var(--cyan-blue); text-transform: uppercase; margin-bottom: 0.75rem;">Interactive API Sandbox</h4>
         <div class="form-group">
@@ -184,6 +186,7 @@
             <option value="scrape">POST /api/scrape.php (Anti-Blocker)</option>
             <option value="stripe">POST /api/stripe.php (Deposit Session)</option>
             <option value="deposits">GET /api/deposits.php (Ledger List)</option>
+            <option value="twilio">POST /api/twilio.php (SMS Dispatch)</option>
           </select>
         </div>
         <button class="btn-cyan" style="width: 100%; justify-content: center; font-size: 0.78rem;" onclick="runDevOpsApiTest()">
@@ -192,84 +195,6 @@
         <div style="margin-top: 1rem;">
           <label style="font-size: 0.72rem; color: var(--text-muted);">Response Payload (JSON):</label>
           <div id="devops-api-response" style="background: #050a12; border: 1px solid #1e293b; border-radius: var(--radius-sm); padding: 0.75rem; font-family: var(--font-mono); font-size: 0.76rem; color: #10b981; min-height: 140px; white-space: pre-wrap;">Select an endpoint and click execute.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- LIVE ORGANIZATION FEED TICKER -->
-  <div class="live-feed-ticker">
-    <span class="ticker-badge">Live Feed</span>
-    <div id="ticker-content" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">
-      <span>⏳ Ingesting live announcements from external lodge feed...</span>
-    </div>
-    <a href="setup.html" style="color: var(--gold-accent); text-decoration: none; font-size: 0.8rem; flex-shrink: 0; font-weight: 600;">⚙️ Configure Feed</a>
-  </div>
-
-  <!-- FULLSCREEN TV KIOSK VIEW WITH AUTO-CYCLING 15-SECOND CAROUSEL -->
-  <div id="tv-kiosk-view" class="tv-kiosk-view">
-    <div class="tv-header">
-      <div style="display: flex; align-items: center; gap: 1rem;">
-        <span style="font-size: 2.5rem;" id="tv-crest-emoji">🦌</span>
-        <div>
-          <h1 style="font-size: 1.8rem; margin: 0;" id="tv-org-title">Social Quarters Live Display</h1>
-          <span style="color: var(--gold-accent); font-size: 1rem; text-transform: uppercase;">15-Second Cycling Taproom Kiosk</span>
-        </div>
-      </div>
-      <div style="text-align: right;">
-        <div id="tv-clock" style="font-size: 2rem; font-weight: 700; font-family: var(--font-serif); color: var(--gold-accent);">7:00 PM</div>
-        <button class="btn-secondary" style="margin-top: 0.3rem;" onclick="toggleTVKiosk()">Exit Kiosk Mode ✕</button>
-      </div>
-    </div>
-
-    <!-- 4 Auto-Cycling Carousel Slides -->
-    <div class="tv-carousel-container">
-      <div class="tv-slide active">
-        <div class="tv-grid">
-          <div class="tv-card">
-            <h2 style="color: var(--gold-accent); margin-bottom: 1rem;">📅 Next Stated Meeting</h2>
-            <p style="font-size: 1.25rem; font-weight: 600;">1st & 3rd Tuesdays at 7:00 PM</p>
-            <p style="color: var(--text-secondary); margin-top: 0.5rem;">Lodge Social Quarters & Hall. Balloting on new inquiries and committee reports.</p>
-            <div style="margin-top: auto; padding: 1rem; background: rgba(212, 175, 55, 0.1); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
-              <strong class="text-gold">Upcoming Gala:</strong> Veterans Appreciation Banquet
-            </div>
-          </div>
-          <div class="tv-card">
-            <h2 style="color: var(--gold-accent); margin-bottom: 1rem;">🔨 Charity Fundometer</h2>
-            <div style="font-size: 2.5rem; font-weight: 700; color: var(--emerald-green); font-family: var(--font-serif);">$4,850.00</div>
-            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Goal: $6,000 for Community & Veterans Aid</p>
-            <div style="margin-top: auto; font-size: 0.95rem; color: var(--text-muted);">Top active lot: <strong>County Fair VIP Family Pass ($275)</strong></div>
-          </div>
-          <div class="tv-card" style="text-align: center; justify-content: center;">
-            <h2 style="color: var(--gold-accent); margin-bottom: 0.5rem;">📱 Bid from the Bar!</h2>
-            <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1rem;">Scan QR code with your phone camera:</p>
-            <svg viewBox="0 0 100 100" width="130" height="130" style="margin: 0 auto;">
-              <rect x="5" y="5" width="25" height="25" fill="#ffffff"/>
-              <rect x="70" y="5" width="25" height="25" fill="#ffffff"/>
-              <rect x="5" y="70" width="25" height="25" fill="#ffffff"/>
-              <circle cx="50" cy="50" r="10" fill="#d4af37"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <div class="tv-slide">
-        <div class="tv-grid">
-          <div class="tv-card">
-            <h2 style="color: var(--gold-accent); margin-bottom: 1rem;">🎲 Monopoly Tournament</h2>
-            <p style="font-size: 1.1rem;"><strong>Current Leader:</strong> Dave R. (4,200 pts)</p>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.3rem;">Next Match: Thursday at 6:30 PM (GM: Dave)</p>
-          </div>
-          <div class="tv-card">
-            <h2 style="color: var(--gold-accent); margin-bottom: 1rem;">🎱 Billiards & Darts Ladders</h2>
-            <p style="font-size: 1.1rem;"><strong>8-Ball Champion:</strong> Alex G. (18 Wins)</p>
-            <p style="font-size: 1.1rem; margin-top: 0.5rem;"><strong>Darts League Leader:</strong> Steve H. (24 Pts)</p>
-          </div>
-          <div class="tv-card">
-            <h2 style="color: var(--gold-accent); margin-bottom: 1rem;">⭐ Volunteer Shifts</h2>
-            <p style="font-size: 1.1rem;">Friday Fish Fry: 1 Slot Open!</p>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.4rem;">Tap 'Claim Shift' on the web app to log your hours.</p>
-          </div>
         </div>
       </div>
     </div>
@@ -284,21 +209,20 @@
         </div>
         <div class="brand-text">
           <h1 id="brand-org-name">Community Lodge #100</h1>
-          <span>VEFA Engine • v2.2.3</span>
+          <span>VEFA Engine • v2.3.1</span>
         </div>
       </a>
 
-      <!-- Navigation Links -->
       <ul class="nav-links">
         <li><a href="#community-pillars"><span>🤝</span> Community</a></li>
         <li><a href="#exchange"><span>🎁</span> Exchange</a></li>
         <li><a href="#tournaments"><span>🎲</span> Tournaments</a></li>
         <li><a href="#auctions"><span>🔨</span> Auctions</a></li>
+        <li><a href="#heritage-tour"><span>🏛️</span> Heritage Tour</a></li>
         <li><a href="#planogram"><span>📌</span> Corkboard</a></li>
-        <li><a href="#facilities"><span>🏛️</span> Hall Deposit</a></li>
+        <li><a href="#facilities"><span>💳</span> Hall Deposit</a></li>
       </ul>
 
-      <!-- Actions -->
       <div class="nav-actions">
         <div id="user-session-chip" class="user-session-chip" onclick="openModal('auth-modal')" title="Switch Profile">
           <span id="session-avatar">👤</span>
@@ -335,13 +259,12 @@
       </p>
 
       <div class="hero-ctas">
-        <a href="#tournaments" class="btn-primary"><span>🎲</span> Lounge Tournaments</a>
-        <a href="#exchange" class="btn-emerald"><span>🎁</span> Community Exchange</a>
+        <a href="#exchange" class="btn-emerald"><span>🎁</span> Free Giveaways & Exchange</a>
+        <a href="#auctions" class="btn-primary"><span>🔨</span> Charity Auctions</a>
+        <a href="#tournaments" class="btn-secondary"><span>🎲</span> Lounge Tournaments</a>
         <button class="btn-secondary" onclick="openModal('hall-deposit-modal')"><span>💳</span> Pay Hall Deposit ($150)</button>
-        <a href="setup.html" class="btn-secondary"><span>⚙️</span> Setup Wizard</a>
       </div>
 
-      <!-- Live Metrics HUD -->
       <div class="hero-stats-hud">
         <div class="stat-box">
           <span class="num">$150,000+</span>
@@ -362,7 +285,6 @@
       </div>
     </div>
 
-    <!-- Visual Banner Card -->
     <div class="glass-card" style="padding: 1.5rem; text-align: center; border-top: 4px solid var(--gold-accent);">
       <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Lodge Main Quarters</h3>
       <p style="font-size: 0.86rem; color: var(--text-secondary); margin-bottom: 1.2rem;">
@@ -372,17 +294,20 @@
     </div>
   </section>
 
-  <!-- SECTION: COMMUNITY PILLARS (VOLUNTEER BOARD, 50/50 RAFFLE, TAPROOM SPECIALS) -->
+  <!-- SECTION: COMMUNITY PILLARS -->
   <section id="community-pillars" class="section-wrapper">
     <div class="section-header">
       <span class="section-tag">🤝 Fraternal Fellowship & Mutual Aid</span>
       <h2>Community Pillars & Volunteer Hub</h2>
-      <p>Coordinate volunteer service hours, support weekly charity raffles, and see daily taproom specials.</p>
+      <p>Coordinate volunteer service hours, dispatch Twilio/SMS shift reminders, and support weekly 50/50 charity raffles.</p>
     </div>
 
     <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2rem;">
       <div class="glass-card" style="padding: 1.5rem;">
-        <h3 style="font-size: 1.25rem; color: var(--gold-accent); margin-bottom: 0.5rem;">✋ Open Volunteer Shifts (Log Hours)</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <h3 style="font-size: 1.25rem; color: var(--gold-accent); margin: 0;">✋ Open Volunteer Shifts (Log Hours)</h3>
+          <span style="font-size: 0.76rem; color: var(--emerald-green);">📱 SMS Reminders Active</span>
+        </div>
         <p style="font-size: 0.86rem; color: var(--text-secondary); margin-bottom: 1rem;">Claim a shift to automatically log service hours for lodge annual reports.</p>
         <div id="volunteer-shifts-list"></div>
       </div>
@@ -408,12 +333,68 @@
     </div>
   </section>
 
-  <!-- SECTION: LOUNGE TOURNAMENT & CUSTOM GAME ARENA -->
-  <section id="tournaments" class="section-wrapper" style="background: radial-gradient(circle at center top, rgba(212, 175, 55, 0.06) 0%, transparent 70%);">
+  <!-- SECTION: COMMUNITY EXCHANGE & 100% FREE GIVEAWAYS -->
+  <section id="exchange" class="section-wrapper">
     <div class="section-header">
-      <span class="section-tag">🎲 Lounge Tournaments & Game Master Hub</span>
+      <span class="section-tag">🎁 Member Mutual Aid & Marketplace</span>
+      <h2>Lodge Community Exchange & Tag Sale</h2>
+      <p>Browse 100% free community giveaways, member tag sale bargains, surplus tools, and furniture. Admins can edit or remove any listing directly from this page.</p>
+      <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--gold-accent);">
+        ⭐ <em>Admin Note: Switch to "Lodge Officer" to reveal instant [✏️ Edit] and [🗑️ Remove] buttons on every listing card.</em>
+      </div>
+    </div>
+
+    <!-- Category Filter Bar -->
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1.5rem;">
+      <button class="pill-btn active" onclick="setExchangeFilter('all', this)">🔍 All Listings (6)</button>
+      <button class="pill-btn" onclick="setExchangeFilter('giveaway', this)">🎁 Free Giveaways ($0)</button>
+      <button class="pill-btn" onclick="setExchangeFilter('furniture', this)">🪑 Furniture</button>
+      <button class="pill-btn" onclick="setExchangeFilter('sports', this)">⚽ Youth & Sports</button>
+      <button class="pill-btn" onclick="setExchangeFilter('tools', this)">🔧 Tools & Workshop</button>
+    </div>
+
+    <div class="search-action-bar">
+      <div class="search-input-wrap">
+        <span>🔍</span>
+        <input type="text" id="exchange-search-input" placeholder="Search furniture, tools, free bikes, vintage goods..." oninput="AppState.searchQuery = this.value; renderExchangeItems();">
+      </div>
+      <button class="btn-primary" onclick="openModal('post-item-modal')">+ Post New Listing</button>
+    </div>
+
+    <div class="cards-grid" id="exchange-items-grid"></div>
+  </section>
+
+  <!-- SECTION: CHARITY AUCTION ARENA -->
+  <section id="auctions" class="section-wrapper" style="background: radial-gradient(circle at center top, rgba(212, 175, 55, 0.08) 0%, transparent 70%);">
+    <div class="section-header">
+      <span class="section-tag">🔨 Real-Time Silent & Live Bidding</span>
+      <h2>Charity Fundraiser Auction Arena</h2>
+      <p>Bid on exclusive family passes, handcrafted heirloom clocks, historic lithographs, and grand banquet dinners. 100% of proceeds benefit local community aid.</p>
+      <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--gold-accent);">
+        ⭐ <em>Admin Note: You can customize or add new auction lots anytime from the ⭐ Officer Command Studio.</em>
+      </div>
+    </div>
+
+    <div class="cards-grid" id="auction-items-grid"></div>
+  </section>
+
+  <!-- SECTION: CIVIC HERITAGE & AUDIO WALKING TOUR -->
+  <section id="heritage-tour" class="section-wrapper">
+    <div class="section-header">
+      <span class="section-tag">🏛️ Local History & Cultural Heritage</span>
+      <h2>Civic Architectural & Heritage Audio Tour</h2>
+      <p>Explore landmark historic architecture and municipal heritage. Listen to synthesized audio narrations for every historic stop!</p>
+    </div>
+
+    <div class="cards-grid" id="landmarks-tour-grid"></div>
+  </section>
+
+  <!-- SECTION: LOUNGE TOURNAMENT & CUSTOM GAME ARENA -->
+  <section id="tournaments" class="section-wrapper">
+    <div class="section-header">
+      <span class="section-tag">🎲 Lounge Tournaments & Year-End Eclipse Engine</span>
       <h2>Lounge Tournament Arena & Custom Games</h2>
-      <p>Track Monopoly, Darts, Billiards, Poker, Catan, or any custom game. Self-assign the <strong>Game Master</strong> title to manage brackets and schedule match nights in sync with the lodge calendar!</p>
+      <p>Track Monopoly, Darts, Billiards, Poker, Catan, or any custom game. All users can create games and log scores! When a season eclipses into the new year, champions are archived to the Hall of Fame.</p>
     </div>
 
     <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
@@ -425,42 +406,12 @@
     <div class="cards-grid" id="tournament-games-grid"></div>
   </section>
 
-  <!-- SECTION: COMMUNITY EXCHANGE -->
-  <section id="exchange" class="section-wrapper">
-    <div class="section-header">
-      <span class="section-tag">🎁 Member Mutual Aid & Marketplace</span>
-      <h2>Lodge Community Exchange</h2>
-      <p>Browse 100% free community giveaways, member tag sale bargains, and surplus goods. Upload items with instant photo compression right from your phone!</p>
-    </div>
-
-    <div class="search-action-bar">
-      <div class="search-input-wrap">
-        <span>🔍</span>
-        <input type="text" id="exchange-search-input" placeholder="Search furniture, tools, free bikes, vintage goods..." oninput="AppState.searchQuery = this.value; renderExchangeItems();">
-      </div>
-      <button class="btn-primary" onclick="openModal('post-item-modal')">+ Post Listing</button>
-    </div>
-
-    <div class="cards-grid" id="exchange-items-grid"></div>
-  </section>
-
-  <!-- SECTION: CHARITY AUCTION ARENA -->
-  <section id="auctions" class="section-wrapper">
-    <div class="section-header">
-      <span class="section-tag">🔨 Real-Time Silent & Live Bidding</span>
-      <h2>Charity Fundraiser Auction Arena</h2>
-      <p>Bid on exclusive experiences, artisan crafts, and historic memorabilia. 100% of proceeds benefit local community aid.</p>
-    </div>
-
-    <div class="cards-grid" id="auction-items-grid"></div>
-  </section>
-
   <!-- SECTION: PLAN-O-GRAM CORKBOARD -->
   <section id="planogram" class="section-wrapper">
     <div class="section-header">
       <span class="section-tag">📌 Physical-to-Digital Sync</span>
       <h2>Lobby Bulletin Board & Plan-o-gram</h2>
-      <p>A digital replica of the real corkboard in the lodge lobby. Rearrange items on the digital board, and generate a printable layout diagram with scannable QR codes so physical slips match the digital plan-o-gram!</p>
+      <p>A digital replica of the real corkboard in the lodge lobby. Generate a printable layout diagram with scannable QR codes!</p>
     </div>
 
     <div class="corkboard-frame">
@@ -511,7 +462,7 @@
     </div>
   </section>
 
-  <!-- MOBILE-FIRST BOTTOM NAVIGATION BAR (2026/2027 ERGONOMIC THUMB BAR) -->
+  <!-- MOBILE-FIRST BOTTOM NAVIGATION BAR -->
   <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
     <a href="#hero" class="mobile-nav-item active">
       <span>🏛️</span>
@@ -541,6 +492,47 @@
 
   <!-- MODALS -->
 
+  <!-- EDIT EXCHANGE ITEM MODAL -->
+  <div id="edit-item-modal" class="modal-backdrop" onclick="handleBackdropClick(event, 'edit-item-modal')">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>✏️ Edit Community Listing (Admin Mode)</h3>
+        <button class="icon-btn" onclick="closeModal('edit-item-modal')">✕</button>
+      </div>
+      <form onsubmit="handleEditExchangeSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="edit-item-id">
+          <div class="form-group">
+            <label>Item Title *</label>
+            <input type="text" id="edit-title" class="form-control" required>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label>Category</label>
+              <select id="edit-category" class="form-control">
+                <option value="furniture">Furniture</option>
+                <option value="tools">Tools</option>
+                <option value="sports">Youth Sports</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Price ($ USD, 0 for Free)</label>
+              <input type="number" id="edit-price" class="form-control" min="0" step="0.50" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description *</label>
+            <textarea id="edit-desc" class="form-control" rows="3" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('edit-item-modal')">Cancel</button>
+          <button type="submit" class="btn-emerald">Save Listing Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- ADD CUSTOM TOURNAMENT GAME MODAL -->
   <div id="add-game-modal" class="modal-backdrop" onclick="handleBackdropClick(event, 'add-game-modal')">
     <div class="modal-dialog">
@@ -562,7 +554,7 @@
                 <option value="Card Game">Card Game</option>
                 <option value="Lounge Cue Sports">Lounge Cue Sports</option>
                 <option value="Lounge Target Sports">Lounge Target Sports</option>
-                <option value="Strategy & Trivia">Strategy & Trivia</option>
+                <option value="Lawn Sports">Lawn Sports</option>
               </select>
             </div>
             <div class="form-group">
@@ -571,7 +563,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label>Match Schedule (Syncs to Lodge Calendar) *</label>
+            <label>Match Schedule (Syncs to Calendar) *</label>
             <input type="text" id="new-game-schedule" class="form-control" placeholder="e.g. Thursdays at 6:30 PM" required>
           </div>
           <div class="form-group">
@@ -587,28 +579,11 @@
     </div>
   </div>
 
-  <!-- LOG SCORE MODAL -->
-  <div id="score-match-modal" class="modal-backdrop" onclick="handleBackdropClick(event, 'score-match-modal')">
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <h3>🏆 Log Tournament Score & Rank</h3>
-        <button class="icon-btn" onclick="closeModal('score-match-modal')">✕</button>
-      </div>
-      <form onsubmit="handleLogScoreSubmit(event)">
-        <div class="modal-body" id="score-match-body"></div>
-        <div class="modal-footer">
-          <button type="button" class="btn-secondary" onclick="closeModal('score-match-modal')">Cancel</button>
-          <button type="submit" class="btn-emerald">Submit & Update Leaderboard</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- OFFICER OPERATIONS & DEPOSIT LEDGER MODAL -->
+  <!-- OFFICER STUDIO & SEATED ROSTER MODAL -->
   <div id="officer-studio-modal" class="modal-backdrop" onclick="handleBackdropClick(event, 'officer-studio-modal')">
-    <div class="modal-dialog" style="max-width: 780px;">
+    <div class="modal-dialog" style="max-width: 820px;">
       <div class="modal-header">
-        <h3>⭐ Officer Command Studio & $150 Deposit Ledger</h3>
+        <h3>⭐ Officer Command Studio & Leadership Hub</h3>
         <button class="icon-btn" onclick="closeModal('officer-studio-modal')">✕</button>
       </div>
       <div class="modal-body">
@@ -617,9 +592,10 @@
             <h4 style="color: var(--gold-accent); margin: 0;">Hall Rental Reservation Ledger</h4>
             <span style="font-size: 0.78rem; color: var(--text-muted);">Manage deposits across Stripe, Cash App, Venmo, Chime, Zelle, and Check</span>
           </div>
-          <button class="btn-emerald" style="font-size: 0.82rem;" onclick="exportDepositsCSV()">
-            📊 Export CSV Report
-          </button>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn-secondary" style="font-size: 0.82rem;" onclick="generateTrusteeAuditReport()">📄 Audit Report</button>
+            <button class="btn-emerald" style="font-size: 0.82rem;" onclick="exportDepositsCSV()">📊 CSV Export</button>
+          </div>
         </div>
 
         <table class="leaderboard-table" style="margin-bottom: 1.5rem;">
@@ -634,84 +610,23 @@
           </thead>
           <tbody id="officer-deposit-tbody"></tbody>
         </table>
+
+        <h4 style="color: var(--gold-accent); margin-bottom: 0.5rem;">👑 Seated Leadership & Officers Registry</h4>
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Title / Station</th>
+              <th>Officer Name</th>
+              <th>Term</th>
+              <th>Contact Phone</th>
+            </tr>
+          </thead>
+          <tbody id="officer-roster-tbody"></tbody>
+        </table>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn-secondary" onclick="closeModal('officer-studio-modal')">Close Studio</button>
       </div>
-    </div>
-  </div>
-
-  <!-- POST ITEM MODAL -->
-  <div id="post-item-modal" class="modal-backdrop" onclick="handleBackdropClick(event, 'post-item-modal')">
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <h3>Post Item or Free Giveaway</h3>
-        <button class="icon-btn" onclick="closeModal('post-item-modal')">✕</button>
-      </div>
-      <form onsubmit="handlePostItemSubmit(event)">
-        <div class="modal-body">
-          <div class="form-group">
-            <label>Item Title *</label>
-            <input type="text" id="post-title" class="form-control" placeholder="e.g. Solid Oak Table, Youth Bike..." required>
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div class="form-group">
-              <label>Category</label>
-              <select id="post-category" class="form-control">
-                <option value="furniture">Furniture</option>
-                <option value="tools">Tools</option>
-                <option value="sports">Youth Sports</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Price ($ USD, 0 for Free)</label>
-              <input type="number" id="post-price" class="form-control" value="0.00" min="0" step="0.50">
-            </div>
-          </div>
-          <div class="form-group">
-            <label>📷 Direct Camera Photo Upload (Auto-Compressed)</label>
-            <input type="file" id="post-photo-upload" class="form-control" accept="image/*" onchange="handleDirectPhotoUpload(event)">
-            <input type="hidden" id="post-image-url" value="https://images.unsplash.com/photo-1580481077197-094c48aa795a?auto=format&fit=crop&w=600&q=80">
-            <div id="post-photo-preview-wrap" style="margin-top: 0.5rem; display: none;">
-              <img id="post-photo-preview" src="" alt="Preview" style="max-height: 100px; border-radius: var(--radius-sm);">
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Description *</label>
-            <textarea id="post-desc" class="form-control" rows="3" required></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-secondary" onclick="closeModal('post-item-modal')">Cancel</button>
-          <button type="submit" class="btn-primary">Publish Listing</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div id="claim-item-modal" class="modal-backdrop" onclick="handleBackdropClick(event, 'claim-item-modal')">
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <h3>Claim / Purchase Item</h3>
-        <button class="icon-btn" onclick="closeModal('claim-item-modal')">✕</button>
-      </div>
-      <div class="modal-body" id="claim-modal-body"></div>
-    </div>
-  </div>
-
-  <div id="place-bid-modal" class="modal-backdrop" onclick="handleBackdropClick(event, 'place-bid-modal')">
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <h3>Place Live Bid</h3>
-        <button class="icon-btn" onclick="closeModal('place-bid-modal')">✕</button>
-      </div>
-      <form onsubmit="handlePlaceBidSubmit(event)">
-        <div class="modal-body" id="bid-modal-body"></div>
-        <div class="modal-footer">
-          <button type="button" class="btn-secondary" onclick="closeModal('place-bid-modal')">Cancel</button>
-          <button type="submit" class="btn-emerald">Confirm Bid</button>
-        </div>
-      </form>
     </div>
   </div>
 
@@ -765,14 +680,12 @@
           <div id="pay-view-cashapp" class="glass-card" style="padding: 1rem; font-size: 0.88rem; display: none;">
             <strong>🟢 Pay with Cash App ($150.00)</strong>
             <p style="color: var(--text-secondary); margin: 0.3rem 0;">Send to lodge Cashtag: <strong class="text-emerald" id="dep-cashapp-handle">$Lodge100Community</strong></p>
-            <a href="https://cash.app/$Lodge100Community/150" target="_blank" class="btn-emerald" style="margin-top: 0.5rem; display: inline-flex;">Open Cash App & Pay $150 →</a>
-            <input type="text" id="dep-cashapp-ref" class="form-control" placeholder="Enter your Cash App name/reference" style="margin-top: 0.75rem;">
+            <input type="text" id="dep-cashapp-ref" class="form-control" placeholder="Enter your Cash App reference" style="margin-top: 0.75rem;">
           </div>
 
           <div id="pay-view-venmo" class="glass-card" style="padding: 1rem; font-size: 0.88rem; display: none;">
             <strong>🔵 Pay with Venmo ($150.00)</strong>
             <p style="color: var(--text-secondary); margin: 0.3rem 0;">Send to lodge Venmo: <strong class="text-gold" id="dep-venmo-handle">@Lodge100-Charity</strong></p>
-            <a href="https://venmo.com" target="_blank" class="btn-primary" style="margin-top: 0.5rem; display: inline-flex;">Open Venmo & Pay $150 →</a>
             <input type="text" id="dep-venmo-ref" class="form-control" placeholder="Enter your Venmo username/reference" style="margin-top: 0.75rem;">
           </div>
 
@@ -814,7 +727,7 @@
             <strong>🎲 Tournament Game Master</strong> (Host & Score Matches)
           </div>
           <div class="glass-card" style="padding: 1.1rem; cursor: pointer; border-left: 4px solid var(--royal-purple);" onclick="switchUserRole('officer', 'Lodge Officer', 'Officer')">
-            <strong>⭐ Lodge Officer / Committee Chair</strong> (Admin Studio Mode)
+            <strong>⭐ Lodge Officer / Committee Chair</strong> (Admin Studio & Listing Controls)
           </div>
           <div class="glass-card" style="padding: 1.1rem; cursor: pointer; border-left: 4px solid var(--cyan-blue);" onclick="switchUserRole('devops', 'Lead Engineer', 'DevOps')">
             <strong>🛠️ Developer (DevOps Console Mode)</strong> (Code & API Inspector)
@@ -822,6 +735,66 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- POST ITEM MODAL -->
+  <div id="post-item-modal" class="modal-backdrop" onclick="handleBackdropClick(event, 'post-item-modal')">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Post Item or Free Giveaway</h3>
+        <button class="icon-btn" onclick="closeModal('post-item-modal')">✕</button>
+      </div>
+      <form onsubmit="handlePostItemSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Item Title *</label>
+            <input type="text" id="post-title" class="form-control" placeholder="e.g. Solid Oak Table, Youth Bike..." required>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label>Category</label>
+              <select id="post-category" class="form-control">
+                <option value="furniture">Furniture</option>
+                <option value="tools">Tools</option>
+                <option value="sports">Youth Sports</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Price ($ USD, 0 for Free)</label>
+              <input type="number" id="post-price" class="form-control" value="0.00" min="0" step="0.50">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>📷 Direct Camera Photo Upload (Auto-Compressed)</label>
+            <input type="file" id="post-photo-upload" class="form-control" accept="image/*" onchange="handleDirectPhotoUpload(event)">
+            <input type="hidden" id="post-image-url" value="https://images.unsplash.com/photo-1580481077197-094c48aa795a?auto=format&fit=crop&w=600&q=80">
+            <div id="post-photo-preview-wrap" style="margin-top: 0.5rem; display: none;">
+              <img id="post-photo-preview" src="" alt="Preview" style="max-height: 100px; border-radius: var(--radius-sm);">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description *</label>
+            <textarea id="post-desc" class="form-control" rows="3" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('post-item-modal')">Cancel</button>
+          <button type="submit" class="btn-primary">Publish Listing</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="claim-item-modal" class="modal-backdrop" onclick="handleBackdropClick(event, 'claim-item-modal')">
+    <div class="modal-dialog"><div class="modal-header"><h3>Claim / Purchase Item</h3><button class="icon-btn" onclick="closeModal('claim-item-modal')">✕</button></div><div class="modal-body" id="claim-modal-body"></div></div>
+  </div>
+
+  <div id="place-bid-modal" class="modal-backdrop" onclick="handleBackdropClick(event, 'place-bid-modal')">
+    <div class="modal-dialog"><div class="modal-header"><h3>Place Live Bid</h3><button class="icon-btn" onclick="closeModal('place-bid-modal')">✕</button></div><form onsubmit="handlePlaceBidSubmit(event)"><div class="modal-body" id="bid-modal-body"></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="closeModal('place-bid-modal')">Cancel</button><button type="submit" class="btn-emerald">Confirm Bid</button></div></form></div>
+  </div>
+
+  <div id="score-match-modal" class="modal-backdrop" onclick="handleBackdropClick(event, 'score-match-modal')">
+    <div class="modal-dialog"><div class="modal-header"><h3>🏆 Log Tournament Score</h3><button class="icon-btn" onclick="closeModal('score-match-modal')">✕</button></div><form onsubmit="handleLogScoreSubmit(event)"><div class="modal-body" id="score-match-body"></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="closeModal('score-match-modal')">Cancel</button><button type="submit" class="btn-emerald">Submit Score</button></div></form></div>
   </div>
 
   <!-- INSTALL OPTIONS MODAL -->
@@ -840,10 +813,6 @@
             </div>
             <span class="btn-emerald" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">Launch Installer →</span>
           </a>
-          <div class="glass-card" style="padding: 1rem; cursor: pointer;" onclick="downloadInstructions()">
-            <strong style="color: var(--gold-accent);">📖 Docker Compose Deployment</strong>
-            <div style="font-size: 0.78rem; color: var(--text-secondary);">Deploy locally or on VPS with <code>docker compose up -d</code>.</div>
-          </div>
           <div class="glass-card" style="padding: 1rem; cursor: pointer;" onclick="closeModal('install-options-modal'); showToast('Zero-DB Local Browser Mode Active!', 'emerald');">
             <strong style="color: #fff;">⚡ Zero-Database Local Browser Mode</strong>
             <div style="font-size: 0.78rem; color: var(--text-secondary);">Runs purely in your browser via localStorage with no server needed.</div>
@@ -868,9 +837,10 @@
       <div class="footer-col">
         <h4>Community Tools</h4>
         <ul style="list-style: none; font-size: 0.88rem; line-height: 1.8;">
-          <li><a href="#tournaments" style="color: var(--text-secondary); text-decoration: none;">Lounge Tournaments</a></li>
-          <li><a href="#exchange" style="color: var(--text-secondary); text-decoration: none;">Tag Sale & Giveaways</a></li>
-          <li><a href="#facilities" style="color: var(--text-secondary); text-decoration: none;">Hall Rental Deposit ($150)</a></li>
+          <li><a href="#exchange" style="color: var(--text-secondary); text-decoration: none;">🎁 Free Giveaways & Tag Sale</a></li>
+          <li><a href="#auctions" style="color: var(--text-secondary); text-decoration: none;">🔨 Charity Auctions</a></li>
+          <li><a href="#tournaments" style="color: var(--text-secondary); text-decoration: none;">🎲 Lounge Tournaments</a></li>
+          <li><a href="#facilities" style="color: var(--text-secondary); text-decoration: none;">💳 Hall Rental Deposit ($150)</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -878,12 +848,13 @@
         <ul style="list-style: none; font-size: 0.88rem; line-height: 1.8;">
           <li><a href="setup.html" style="color: var(--gold-accent); text-decoration: none;">⚙️ First-Launch Setup Wizard</a></li>
           <li><a href="#planogram" style="color: var(--text-secondary); text-decoration: none;">📌 Plan-o-gram Corkboard</a></li>
+          <li><a href="#heritage-tour" style="color: var(--text-secondary); text-decoration: none;">🏛️ Heritage Audio Tour</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
       <div>© 2027 VEFA: Fraternal & Civic Community Engine. Please contact admin@vefa.club for more information.</div>
-      <div style="font-size: 0.76rem; color: var(--text-muted);">"Be The Difference" • Version 2.2.3 Masterwork</div>
+      <div style="font-size: 0.76rem; color: var(--text-muted);">"Be The Difference" • Version 2.3.1 Refactored</div>
     </div>
   </footer>
 

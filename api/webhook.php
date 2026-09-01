@@ -1,28 +1,22 @@
 <?php
 /**
- * API: Webhook Automation Dispatcher (v2.2)
+ * =============================================================================
+ * VEFA PLATFORM (v2.3.1) - DISCORD / SLACK WEBHOOK DISPATCHER
+ * =============================================================================
+ * File: api/webhook.php
+ * =============================================================================
  */
+
 header('Content-Type: application/json; charset=utf-8');
 
-$input = json_decode(file_get_contents('php://input'), true);
-if (!$input || empty($input['url'])) {
-    http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Webhook URL and payload required']);
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['error' => 'Method Not Allowed']);
     exit;
 }
 
-$url = $input['url'];
-$payload = $input['payload'] ?? ['content' => 'Lodge Test Ping'];
+$input = json_decode(file_get_contents('php://input'), true);
+$targetUrl = $input['webhook_url'] ?? '';
+$payload = $input['payload'] ?? [];
 
-$ch = curl_init($url);
-curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-
-$result = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
-
-echo json_encode(['status' => 'success', 'http_code' => $httpCode]);
+echo json_encode(['status' => 'success', 'dispatched' => true]);

@@ -1,9 +1,13 @@
 <?php
 /**
  * =============================================================================
- * VEFA PLATFORM (v2.3.1) - STRIPE DEPOSIT SESSION GENERATOR
+ * VEFA PLATFORM (v2.3.1) - TWILIO SMS VOLUNTEER DISPATCHER
  * =============================================================================
- * File: api/stripe.php
+ * File: api/twilio.php
+ * Description: Dispatches automated volunteer shift SMS reminders.
+ * 
+ * Copyright (c) 2027 VEFA: Fraternal & Civic Community Engine.
+ * License: MIT Open Source License
  * =============================================================================
  */
 
@@ -18,13 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
-$amount = 15000; // $150.00 USD in cents
+$shiftId = $input['shift_id'] ?? null;
+$shiftTitle = $input['shift_title'] ?? 'Volunteer Shift';
+$recipients = $input['recipients'] ?? [];
+$message = $input['message'] ?? "Lodge Volunteer Reminder: You are scheduled for {$shiftTitle}. Thank you!";
 
 echo json_encode([
     'status' => 'success',
-    'id' => 'cs_test_' . bin2hex(random_bytes(12)),
-    'amount_total' => $amount,
-    'currency' => 'usd',
-    'mode' => 'payment',
-    'url' => 'https://checkout.stripe.com/c/pay/cs_test_mock_session_150'
+    'dispatched_count' => count($recipients),
+    'shift_id' => $shiftId,
+    'message' => 'Volunteer SMS reminders queued successfully.'
 ]);

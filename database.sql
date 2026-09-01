@@ -1,70 +1,69 @@
 -- =============================================================================
--- FRATERNAL & CIVIC COMMUNITY ENGINE (VERSION 2.2 OPEN-SOURCE)
--- DATABASE SCHEMA: MYSQL / MARIADB / SUPABASE POSTGRESQL
--- LICENSE: MIT OPEN SOURCE
+-- VEFA: FRATERNAL & CIVIC COMMUNITY ENGINE (VERSION 2.3.1)
+-- Relational Database Schema (MySQL / MariaDB)
+-- © 2027 VEFA. Contact: admin@vefa.club
 -- =============================================================================
 
+CREATE DATABASE IF NOT EXISTS `vefa_community_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `vefa_community_db`;
+
 CREATE TABLE IF NOT EXISTS `users` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `role` VARCHAR(32) NOT NULL DEFAULT 'guest',
+  `id` VARCHAR(64) PRIMARY KEY,
+  `email` VARCHAR(191) UNIQUE NOT NULL,
   `full_name` VARCHAR(128) NOT NULL,
-  `email` VARCHAR(128) UNIQUE NOT NULL,
-  `phone` VARCHAR(64) DEFAULT NULL,
-  `member_number` VARCHAR(64) DEFAULT NULL,
+  `role` ENUM('guest', 'member', 'gamemaster', 'officer', 'devops') DEFAULT 'guest',
+  `phone` VARCHAR(32),
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `exchange_items` (
   `id` VARCHAR(64) PRIMARY KEY,
   `title` VARCHAR(255) NOT NULL,
   `category` VARCHAR(64) NOT NULL,
-  `type` VARCHAR(32) NOT NULL DEFAULT 'tag_sale',
-  `price` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-  `item_condition` VARCHAR(64) DEFAULT 'Good',
-  `seller_name` VARCHAR(128) NOT NULL,
-  `seller_contact` VARCHAR(128) NOT NULL,
-  `pickup_location` VARCHAR(255) NOT NULL,
+  `item_type` ENUM('tag_sale', 'giveaway') NOT NULL,
+  `price` DECIMAL(10,2) DEFAULT 0.00,
   `description` TEXT NOT NULL,
-  `image_url` LONGTEXT DEFAULT NULL,
-  `status` VARCHAR(32) NOT NULL DEFAULT 'available',
+  `image_url` TEXT,
+  `seller_name` VARCHAR(128) NOT NULL,
+  `status` ENUM('available', 'claimed', 'sold', 'removed') DEFAULT 'available',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `auction_items` (
+CREATE TABLE IF NOT EXISTS `auction_lots` (
   `id` VARCHAR(64) PRIMARY KEY,
   `title` VARCHAR(255) NOT NULL,
   `cause` VARCHAR(255) NOT NULL,
-  `current_bid` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-  `starting_bid` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-  `bid_count` INT NOT NULL DEFAULT 0,
-  `highest_bidder` VARCHAR(128) DEFAULT 'Starting Bid',
-  `est_value` DECIMAL(10,2) DEFAULT NULL,
-  `min_increment` DECIMAL(10,2) NOT NULL DEFAULT 10.00,
-  `end_time` DATETIME NOT NULL,
-  `image_url` LONGTEXT DEFAULT NULL,
-  `description` TEXT NOT NULL,
+  `current_bid` DECIMAL(10,2) NOT NULL,
+  `starting_bid` DECIMAL(10,2) NOT NULL,
+  `bid_count` INT DEFAULT 0,
+  `highest_bidder` VARCHAR(128),
+  `end_time` DATETIME NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `tournament_games` (
+  `id` VARCHAR(64) PRIMARY KEY,
+  `name` VARCHAR(128) NOT NULL,
+  `category` VARCHAR(64) NOT NULL,
+  `game_master` VARCHAR(128) NOT NULL,
+  `schedule` VARCHAR(128) NOT NULL,
+  `season_year` INT DEFAULT 2026,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `hall_deposits` (
   `id` VARCHAR(64) PRIMARY KEY,
   `client_name` VARCHAR(128) NOT NULL,
-  `phone` VARCHAR(64) NOT NULL,
-  `email` VARCHAR(128) NOT NULL,
   `event_date` DATE NOT NULL,
-  `room_selected` VARCHAR(128) DEFAULT 'Grand Ballroom',
-  `amount_paid` DECIMAL(10,2) NOT NULL DEFAULT 150.00,
-  `payment_method` VARCHAR(64) DEFAULT 'Web Card Payment',
-  `status` VARCHAR(64) NOT NULL DEFAULT 'Deposit Confirmed',
+  `payment_method` VARCHAR(64) NOT NULL,
+  `amount` DECIMAL(10,2) DEFAULT 150.00,
+  `status` ENUM('Pending Review', 'Approved & Date Locked', 'Post-Event Inspected', 'Deposit Refunded') DEFAULT 'Pending Review',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `feed_cache` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `feed_url` VARCHAR(255) NOT NULL,
-  `title` VARCHAR(255) NOT NULL,
-  `link` VARCHAR(255) NOT NULL,
-  `pub_date` VARCHAR(128) NOT NULL,
-  `description` TEXT NOT NULL,
-  `cached_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS `volunteer_shifts` (
+  `id` VARCHAR(64) PRIMARY KEY,
+  `title` VARCHAR(128) NOT NULL,
+  `shift_date` VARCHAR(128) NOT NULL,
+  `needed_volunteers` INT DEFAULT 2,
+  `claimed_volunteers` JSON
+) ENGINE=InnoDB;

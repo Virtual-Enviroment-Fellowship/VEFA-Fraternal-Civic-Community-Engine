@@ -1,40 +1,38 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Fraternal & Civic Community Engine API",
-    "version": "2.2.0",
-    "description": "REST API specification with Live Feed Bridge, Stripe Checkout, and 2026 Anti-Blocker Scraper."
+    "title": "VEFA: Fraternal & Civic Community Engine API",
+    "version": "2.3.1",
+    "description": "OpenAPI specification for the VEFA Platform including $150 Hall Deposits, Community Exchange, Charity Auctions, Twilio SMS Reminders, and Scraper.",
+    "contact": { "email": "admin@vefa.club" }
   },
+  "servers": [{ "url": "api/" }],
   "paths": {
-    "/api/scrape.php": {
-      "post": {
-        "summary": "2026 Anti-Blocker Asset & Metadata Scraper",
-        "responses": { "200": { "description": "JSON containing extracted title, logo, banner, and description" } }
-      }
-    },
-    "/api/feed_sync.php": {
+    "/deposits.php": {
       "get": {
-        "summary": "Incoming RSS/Atom feed synchronization",
-        "responses": { "200": { "description": "Array of parsed feed items" } }
-      }
-    },
-    "/api/feed.php": {
-      "get": {
-        "summary": "Outgoing RSS 2.0 & JSON feed syndication",
-        "responses": { "200": { "description": "Syndicated feed stream" } }
-      }
-    },
-    "/api/stripe.php": {
+        "summary": "Retrieve Hall Rental Reservation Deposits Ledger",
+        "responses": { "200": { "description": "List of active $150 reservation deposits" } }
+      },
       "post": {
-        "summary": "Create Stripe Checkout session for $150 hall deposits",
-        "responses": { "200": { "description": "Stripe session and checkout URL" } }
-      }
-    },
-    "/api/deposits.php": {
-      "post": {
-        "summary": "Record $150 flat hall rental reservation deposit",
+        "summary": "Record a $150 Hall Reservation Deposit",
         "responses": { "200": { "description": "Deposit confirmed" } }
       }
+    },
+    "/twilio.php": {
+      "post": {
+        "summary": "Dispatch SMS volunteer shift reminder",
+        "responses": { "200": { "description": "SMS queued" } }
+      }
+    },
+    "/scrape.php": {
+      "post": {
+        "summary": "Scrape website metadata with SSRF filter",
+        "responses": { "200": { "description": "Ingested metadata" } }
+      }
+    },
+    "/exchange.php": {
+      "get": { "summary": "Get exchange listings" },
+      "post": { "summary": "Create, edit, or delete exchange listing" }
     }
   }
 }
