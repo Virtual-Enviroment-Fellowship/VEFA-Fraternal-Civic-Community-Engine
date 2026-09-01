@@ -1,6 +1,6 @@
 # 🏛️ VEFA: Fraternal & Civic Community Engine (Version 2.3.1 — Refactored Release)
 
-The open-source, white-label, multi-database digital platform for **all Elks Lodges, Granges, Eagles Aeries, Rotary Clubs, Lions Clubs, and Civic Mutual Aid Organizations across America**.
+The open-source, white-label, multi-database digital platform for all organizations, such as the Elks Lodges, Granges, Eagles Aeries, Rotary Clubs, Lions Clubs, and Civic Mutual Aid Organizations across America. Future Roadmap: multi-lingual deployment, compiled releases for Linux and Windows, and more. Please excuse this AI slop: it was posted for an easy fork, which creates ripples throughout time despite the linguistic barriers in 2026.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI: Passing](https://img.shields.io/badge/CI-Passing_100%25-brightgreen.svg)](#)
