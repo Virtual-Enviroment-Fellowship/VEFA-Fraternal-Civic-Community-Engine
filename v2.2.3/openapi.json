@@ -1,0 +1,40 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Fraternal & Civic Community Engine API",
+    "version": "2.2.0",
+    "description": "REST API specification with Live Feed Bridge, Stripe Checkout, and 2026 Anti-Blocker Scraper."
+  },
+  "paths": {
+    "/api/scrape.php": {
+      "post": {
+        "summary": "2026 Anti-Blocker Asset & Metadata Scraper",
+        "responses": { "200": { "description": "JSON containing extracted title, logo, banner, and description" } }
+      }
+    },
+    "/api/feed_sync.php": {
+      "get": {
+        "summary": "Incoming RSS/Atom feed synchronization",
+        "responses": { "200": { "description": "Array of parsed feed items" } }
+      }
+    },
+    "/api/feed.php": {
+      "get": {
+        "summary": "Outgoing RSS 2.0 & JSON feed syndication",
+        "responses": { "200": { "description": "Syndicated feed stream" } }
+      }
+    },
+    "/api/stripe.php": {
+      "post": {
+        "summary": "Create Stripe Checkout session for $150 hall deposits",
+        "responses": { "200": { "description": "Stripe session and checkout URL" } }
+      }
+    },
+    "/api/deposits.php": {
+      "post": {
+        "summary": "Record $150 flat hall rental reservation deposit",
+        "responses": { "200": { "description": "Deposit confirmed" } }
+      }
+    }
+  }
+}
