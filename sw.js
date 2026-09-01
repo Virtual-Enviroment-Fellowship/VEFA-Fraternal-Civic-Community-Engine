@@ -1,35 +1,33 @@
-/**
- * Service Worker: Offline Caching Engine (v2.2)
- */
-const CACHE_NAME = 'fraternal-engine-v2.2';
-const ASSETS = [
+const CACHE_NAME = 'vefa-cache-v2.3.1';
+const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './setup.html',
-  './styles.css',
-  './app.js',
   './config.js',
+  './app.js',
+  './styles.css',
   './manifest.json'
 ];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS_TO_CACHE))
   );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then((keys) => Promise.all(
-      keys.map((k) => k !== CACHE_NAME ? caches.delete(k) : null)
+    caches.keys().then(keys => Promise.all(
+      keys.map(k => { if (k !== CACHE_NAME) return caches.delete(k); })
     ))
   );
   self.clients.claim();
 });
 
 self.addEventListener('fetch', (e) => {
+  if (e.request.url.includes('/api/')) return;
   e.respondWith(
-    caches.match(e.request).then((res) => res || fetch(e.request).catch(() => caches.match('./index.html')))
+    caches.match(e.request).then(res => res || fetch(e.request))
   );
 });

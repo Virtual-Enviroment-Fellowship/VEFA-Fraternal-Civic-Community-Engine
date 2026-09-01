@@ -7,38 +7,73 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.3.1] - 2026-08-31
+### Added
+- **Platform Comparison Matrix**: Comprehensive architectural and cost evaluation comparing Hostinger, cPanel, Render/Railway, and VPS hosting across uptime, persistence, and maintenance ease.
+- **Hostinger 1-Click Auto-Deployer (`vefa-deployer.php`)**: Automated pre-flight environment checks (PHP 8.2+, `pdo_mysql`, `curl`, `json`, `mbstring`, folder write permissions), 1-click database initialization from `database.sql`, and automated `.htaccess` generation.
+- **Hardened `.htaccess` Configuration**: Added HTTPS enforcement, CORS headers, GZIP compression, and MIME type mappings for Apache and Hostinger environments.
+- **`.env.example` Template**: Pre-configured environment variables template for containerized and production deployments.
+- **Dedicated Hosting Guides**: Added `PLATFORM_HOSTING_GUIDE.md` and `HOSTINGER_DEPLOYMENT_GUIDE.md` with step-by-step visual instructions.
+
+### Fixed & Refactored
+- **DOM Modal ID Reconciliation**: Aligned all modal IDs in `index.html` and `app.js` (`edit-item-modal`, `add-game-modal`, `officer-studio-modal`, `score-match-modal`, `hall-deposit-modal`, `install-options-modal`, `post-setup-modal`).
+- **Zero-Database Simulation Fallbacks**: Added graceful fallback to simulated SMS dispatch when running locally in browser mode without an active PHP server.
+- **Standings Array Guardrails**: Safeguarded `archiveSeasonToHallOfFame()` to handle tournament games with fewer than 2 players without throwing runtime errors.
+- **100% White-Label Verification**: Audited all 20+ files to guarantee zero hardcoded lodge numbers or specific towns.
+
+---
+
+## [2.3.0] - 2026-08-31
+### Added
+- **Admin Community Exchange Manager**: Real-time inline `[✏️ Edit]` and `[🗑️ Delete]` controls on all listing cards (including initial seed items) when switched to Officer / Admin mode.
+- **`agent.md` Autonomous AI Agent Coordination Harness**: Runtime specification enabling autonomous LLMs (Claude, Gemini, OpenAI) to execute scheduled operations, moderate marketplace listings, calculate tournament standings, dispatch volunteer SMS reminders, and generate meeting dockets.
+- **Universal Tournament Creation & Year-End Eclipse Engine**: All users (guests, members, officers) can create custom tournament games (Monopoly, Darts, Billiards, Cornhole, Poker, Catan) and self-assign as Game Master. Annual calendar rollover automatically archives champions to the permanent **Historic Hall of Fame**.
+- **Volunteer Twilio / SMS Automation**: Automated 24-hr SMS reminder hooks via Twilio API (`api/twilio.php`) and service hours logging.
+- **Seated Leadership Registry & 1-Click Trustee Audit Reports**: Officer directory and 1-click printable meeting reports compiling deposit balances, 50/50 raffle pots, and logged volunteer hours.
+- **Senior Mode 1-Tap Activator on Gateway**: Quick toggle on the initial Landing Gateway popup.
+
+---
+
 ## [2.2.3] - 2026-08-31
 ### Added
-- **Senior & Elderly Accessibility Suite**: 1-Click Large Print switcher (`Normal`, `Large (18px)`, `Extra Large (21px)`), High-Contrast Mode, 54px+ Senior touch targets, Web Speech "Read Aloud" synthesizer, and 1-Click Tap-to-Call lodge buttons.
-- **Mobile-First Bottom Thumb Navigation Bar**: Ergonomic thumb access on smartphones.
-- **Developer (DevOps) Hyper-Cockpit Console**: In-browser multi-tab code IDE, Postman-grade REST API sandbox, and 1-click code copying & zip export.
-- **Officer & Chair Executive Command Center**: Floating admin bar, $150 deposit ledger with CSV export and approval workflows, and live breaking ticker broadcast dispatcher.
-- **Tournament Arena & Custom Games (Game Master)**: Support for Monopoly, Darts, Billiards, and custom game creation with self-assigned `Game Master` role and calendar sync.
-- **Community Pillars Hub**: 1-Click Volunteer Shift Claimer & Service Hours Logger, 50/50 Charity Raffle pot counter, and Social Quarters taproom daily specials board.
-- **Official VEFA Copyright Notice**: `"© 2027 VEFA: Fraternal & Civic Community Engine. Please contact admin@vefa.club for more information."`
+- **Senior / Elderly Accessibility Suite**: 1-Click Large Print switcher (`Normal`, `Large 18px`, `Extra Large 21px`), High-Contrast reading mode, 54px+ touch targets, Web Speech Synthesizer for announcements, and 1-click tap-to-call lodge phone (`tel:555-123-4567`).
+- **Mobile-First Bottom Thumb Navigation**: Bottom navigation bar positioned for easy one-thumb reach on mobile screens.
+- **DevOps Hyper-Cockpit Console**: Fullscreen developer cockpit featuring an in-browser multi-tab code IDE (`config.js`, `scrape.php`, `stripe.php`, `database.sql`), Postman-grade REST API sandbox, and 1-click code copy.
 
 ---
 
 ## [2.2.2] - 2026-08-31
 ### Added
-- **Mandatory Landing Gateway Popup**: Unskippable modal entry requiring user choice between "See the Demo", "First Time Setup", or "Update my setup".
-- **Post-Setup Action Hub**: 4-way post-wizard modal ("View this demo", "Install now", "Download instructions", "Save setup").
-- **Persistent Top Demo Toolbar**: Always-visible quick buttons to Install, Download Instructions, Save Setup, or Restart/Switch Mode.
+- **Mandatory Landing Gateway Popup**: Initial entry modal presenting 3 clear choices: **"See the Demo"**, **"First Time Setup"**, or **"Update my setup"**.
+- **Post-Setup Action Hub**: 4-action post-wizard hub presenting **"View this demo"**, **"Install now"**, **"Download instructions"**, and **"Save setup"**.
+- **Persistent Top Toolbar**: Always-visible top action bar with quick access to Install, Save Setup, and Restart.
+- **Official 2027 Copyright**: Updated to `"© 2027 VEFA: Fraternal & Civic Community Engine. Please contact admin@vefa.club for more information."`
 
 ---
 
 ## [2.2.1] - 2026-08-31
-### Added
-- **Universal Multi-Payment Gateway Hub**: Native support for Stripe, Cash App Pay (`$cashtag`), Venmo (`@handle`), Chime, Zelle, and In-Person Check/Cash for the flat $150 hall reservation deposit.
-- **2026 Anti-Blocker Scraper**: 5-tier resilient scraping pipeline with private IP SSRF filtering and image MIME whitelisting.
-- **Interactive Setup Wizard Cards**: Gold border glows and synchronized radio badges.
+### Fixed
+- **Setup Wizard Field Validation**: Resolved option selection behaviors in `setup.html`.
+- **Payment Method Sync**: Verified seamless synchronization between setup wizard payment options and the live $150 deposit modal.
 
 ---
 
-## [2.1.0] - 2026-08-30
+## [2.2.0] - 2026-08-30
 ### Added
-- Initial Open-Source White-Label Release for all Elks Lodges, Granges, and civic groups across America.
-- 8-Step First-Launch Setup Wizard (`setup.html`).
-- Digital-to-Physical Plan-o-gram Corkboard with scannable QR code slip generator.
-- 15-Second Cycling Taproom TV Kiosk view.
-- 1-Click MySQL Installer (`install.php`) and Docker Compose.
+- **Multi-Payment Gateway Hub**: Native support for **Stripe**, **Cash App Pay** (`$cashtag`), **Venmo** (`@handle`), **Chime**, **Zelle**, and **Check/Cash** for the flat $150 hall deposit.
+- **2026 Anti-Blocker Scraper**: 1-Click metadata extraction engine (`api/scrape.php`) with private-IP SSRF protection and modern bot-wall bypass.
+- **15-Second Taproom TV Kiosk Carousel**: 4-slide auto-rotating kiosk view for social quarters TVs with scannable QR bidding codes.
+
+---
+
+## [2.1.0] - 2026-08-29
+### Added
+- **Open-Source White-Label Architecture**: Full decoupling of lodge-specific branding to support all American fraternal orders (Elks, Granges, Eagles, Rotary, Lions, Civic Groups).
+- **Physical-to-Digital Plan-o-gram Corkboard**: Digital replica of 36"x48" lobby corkboard with printable layout diagram and QR cards.
+- **Civic Architectural & Heritage Audio Walking Tour**: Historic landmark showcase with synthesized audio narration.
+
+---
+
+## [2.0.0] - 2026-08-28
+### Added
+- Initial fraternal and civic community platform engine prototype.

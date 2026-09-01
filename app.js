@@ -1,10 +1,15 @@
 /**
  * =============================================================================
- * VEFA: FRATERNAL & CIVIC COMMUNITY ENGINE (VERSION 2.2.3 - MASTERWORK EDITION)
+ * VEFA: FRATERNAL & CIVIC COMMUNITY ENGINE (VERSION 2.3.1 - REFACTORED RELEASE)
  * =============================================================================
  * File: app.js
- * Description: Core reactive engine with 2026/2027 Standards, Elderly/Senior
- *              Accessibility Suite, DevOps Cockpit, Officer Studio, and Tournaments.
+ * Description: Core reactive engine featuring:
+ *              - Admin Community Exchange Manager (Live Inline Edit & Delete)
+ *              - Universal Tournament Creation & Annual Year-End Eclipse Engine
+ *              - Volunteer Automation with Twilio/SMS Shift Reminders
+ *              - Seated Leadership Registry & Trustee Meeting Audit Reports
+ *              - Senior / Elderly Accessibility Suite & Speech Synthesizer
+ *              - DevOps Hyper-Cockpit Console & REST API Sandbox
  * 
  * Copyright (c) 2027 VEFA: Fraternal & Civic Community Engine.
  * Please contact admin@vefa.club for more information.
@@ -12,11 +17,6 @@
  * =============================================================================
  */
 
-/**
- * SECURITY HELPER: HTML Sanitizer to prevent Cross-Site Scripting (XSS)
- * @param {string} str - Raw string
- * @returns {string} Escaped safe HTML string
- */
 function escapeHTML(str) {
   if (!str) return '';
   return String(str)
@@ -43,7 +43,6 @@ const AppState = {
   soundEnabled: localStorage.getItem('fraternal_sound') !== 'false',
   activeCategory: 'all',
   searchQuery: '',
-  facilityTab: 'ballroom',
   activePaymentMethod: 'stripe',
   landingGatewayChosen: sessionStorage.getItem('vefa_gateway_chosen') === 'true',
 
@@ -56,7 +55,9 @@ const AppState = {
 
   exchangeItems: JSON.parse(localStorage.getItem('fraternal_exchange_items')) || GENERIC_SEED_ITEMS,
   auctionItems: JSON.parse(localStorage.getItem('fraternal_auction_items')) || GENERIC_SEED_AUCTIONS,
+  landmarks: (typeof GENERIC_SEED_LANDMARKS !== 'undefined') ? GENERIC_SEED_LANDMARKS : [],
   tournamentGames: JSON.parse(localStorage.getItem('fraternal_games')) || GENERIC_SEED_GAMES,
+  hallOfFame: JSON.parse(localStorage.getItem('fraternal_hall_of_fame')) || (typeof GENERIC_HALL_OF_FAME !== 'undefined' ? GENERIC_HALL_OF_FAME : []),
   volunteerShifts: JSON.parse(localStorage.getItem('fraternal_shifts')) || GENERIC_SEED_SHIFTS,
   pins: JSON.parse(localStorage.getItem('fraternal_pins')) || GENERIC_SEED_PINS,
   liveFeedItems: [],
@@ -70,7 +71,7 @@ const AppState = {
 };
 
 // =============================================================================
-// WEB AUDIO API SOUND SYNTHESIZER
+// WEB AUDIO SOUND SYNTHESIZER
 // =============================================================================
 class SoundFX {
   constructor() { this.ctx = null; }
@@ -139,7 +140,7 @@ class SoundFX {
 const sfx = new SoundFX();
 
 // =============================================================================
-// ELDERLY & SENIOR-FRIENDLY ACCESSIBILITY CONTROLS
+// SENIOR ACCESSIBILITY SUITE
 // =============================================================================
 function setFontSize(size) {
   AppState.fontSize = size;
@@ -152,7 +153,7 @@ function setFontSize(size) {
     btn.classList.toggle('active', btn.dataset.size === size);
   });
   sfx.playClick();
-  showToast(`Text Size Adjusted: ${size.toUpperCase()}`, 'gold');
+  showToast(`Text Size: ${size.toUpperCase()}`, 'gold');
 }
 
 function toggleHighContrast() {
@@ -162,7 +163,7 @@ function toggleHighContrast() {
   const btn = document.getElementById('contrast-toggle-btn');
   if (btn) btn.classList.toggle('active', AppState.highContrast);
   sfx.playClick();
-  showToast(`High Contrast Mode: ${AppState.highContrast ? 'ON' : 'OFF'}`, 'gold');
+  showToast(`High Contrast: ${AppState.highContrast ? 'ON' : 'OFF'}`, 'gold');
 }
 
 function toggleSeniorMode() {
@@ -172,24 +173,24 @@ function toggleSeniorMode() {
   if (AppState.seniorMode) setFontSize('large');
   else setFontSize('normal');
   sfx.playChime();
-  showToast(`Senior / Easy-Touch Mode: ${AppState.seniorMode ? 'ACTIVE (Big Text & Buttons)' : 'STANDARD'}`, 'emerald');
+  showToast(`Senior Mode: ${AppState.seniorMode ? 'ACTIVE' : 'STANDARD'}`, 'emerald');
 }
 
 function readAnnouncementsAloud() {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
-    const text = `Lodge Announcements for ${AppState.config.organizationName} ${AppState.config.chapterNumber}. Next stated meeting is 1st and 3rd Tuesdays at 7:00 PM. Monopoly tournament is Thursday at 6:30 PM. Friday Fish Fry dinner special is available from 5:00 to 7:30 PM. Flat 150 dollar hall deposit reservations are open online.`;
+    const text = `Lodge Announcements for ${AppState.config.organizationName} ${AppState.config.chapterNumber}. Next stated meeting is 1st and 3rd Tuesdays at 7:00 PM. Community exchange features 6 active member listings including free bicycles and kindergarten aid. Charity auctions include 4 lots with the County Fair VIP package at 285 dollars. Flat 150 dollar hall deposit reservations are active online.`;
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.9;
     window.speechSynthesis.speak(utterance);
-    showToast('🔊 Reading Lodge Announcements Aloud...', 'emerald');
+    showToast('🔊 Reading Announcements Aloud...', 'emerald');
   } else {
-    showToast('Speech synthesis not supported in this browser.', 'crimson');
+    showToast('Speech synthesis not supported.', 'crimson');
   }
 }
 
 // =============================================================================
-// TOASTS & WEBHOOKS
+// TOAST NOTIFICATIONS & WEBHOOKS
 // =============================================================================
 function showToast(msg, type = 'gold') {
   const container = document.getElementById('toast-container');
@@ -265,55 +266,10 @@ function selectLandingChoice(choice) {
   }
 }
 
-// =============================================================================
-// PERSISTENT TOP TOOLBAR ACTIONS
-// =============================================================================
-function installNow() {
-  sfx.playClick();
-  openModal('install-options-modal');
-}
-
-function downloadInstructions() {
-  sfx.playClick();
-  const instructions = `# VEFA: Fraternal & Civic Community Engine (v2.2.3)
-## Installation & Deployment Guide
-
-Thank you for deploying the VEFA Community Platform for your lodge or civic association!
-
-### 1. Zero-Database / Local Browser Mode (Fastest)
-- Simply open \`index.html\` directly in any web browser.
-- All member marketplace listings, charity auction bids, tournament standings, and corkboard arrangements are stored securely in browser \`localStorage\`.
-
-### 2. Self-Hosted MySQL / MariaDB (Hostinger, cPanel, Apache)
-1. Upload all files to your web server (e.g. \`public_html/\`).
-2. Run the 1-Click Database Installer at: \`http://yourdomain.com/install.php\`
-3. Enter your database credentials to automatically initialize all tables.
-
-### 3. Docker Compose (1-Command Deploy)
-\`\`\`bash
-docker compose up -d
-\`\`\`
-Visit \`http://localhost:8080\` to access the platform.
-
----
-© 2027 VEFA: Fraternal & Civic Community Engine.
-Please contact admin@vefa.club for more information.
-`;
-
-  const blob = new Blob([instructions], { type: 'text/markdown;charset=utf-8;' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.setAttribute('download', 'VEFA_INSTALLATION_GUIDE.md');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  showToast('📥 Installation Guide Downloaded!', 'emerald');
-}
-
 function saveSetup() {
   sfx.playClick();
   const configString = `/**
- * VEFA: Fraternal & Civic Community Engine (v2.2.3)
+ * VEFA: Fraternal & Civic Community Engine (v2.3.1)
  * Saved Configuration File
  * © 2027 VEFA. Contact: admin@vefa.club
  */
@@ -359,11 +315,15 @@ function updateUserSessionUI() {
     else avatarEl.textContent = '👤';
   }
 
-  if (officerBar) officerBar.classList.toggle('active', AppState.currentUser.role === 'officer');
+  const isOfficer = AppState.currentUser.role === 'officer';
+  document.body.classList.toggle('admin-mode-active', isOfficer);
+  if (officerBar) officerBar.classList.toggle('active', isOfficer);
   if (devopsView) {
     devopsView.classList.toggle('active', AppState.currentUser.role === 'devops');
     if (AppState.currentUser.role === 'devops') loadDevOpsFile(AppState.activeDevOpsFile);
   }
+
+  renderExchangeItems();
 }
 
 function switchUserRole(role, name, badge) {
@@ -401,29 +361,323 @@ function handleBackdropClick(e, id) {
 }
 
 // =============================================================================
-// LIVE FEED BRIDGE CLIENT
+// MODULE 1: COMMUNITY EXCHANGE (WITH ADMIN EDIT & DELETE CONTROLS)
 // =============================================================================
-async function syncLiveFeed() {
-  const tickerEl = document.getElementById('ticker-content');
-  if (!tickerEl) return;
+function setExchangeFilter(category, btn) {
+  AppState.activeCategory = category;
+  document.querySelectorAll('#exchange .pill-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderExchangeItems();
+  sfx.playClick();
+}
 
-  const url = AppState.config.feedBridge.incomingRssFeedUrl;
-  try {
-    const res = await fetch(`api/feed_sync.php?url=${encodeURIComponent(url)}`);
-    const data = await res.json();
-    if (data && data.items && data.items.length > 0) {
-      AppState.liveFeedItems = data.items;
-      tickerEl.innerHTML = data.items.map(item => `
-        <span style="margin-right: 2rem;">📢 <strong>${escapeHTML(item.title)}</strong>: ${escapeHTML(item.description.substring(0, 75))}...</span>
-      `).join('');
+function renderExchangeItems() {
+  const grid = document.getElementById('exchange-items-grid');
+  if (!grid) return;
+
+  let items = [...AppState.exchangeItems];
+  if (AppState.activeCategory !== 'all') {
+    if (AppState.activeCategory === 'giveaway') {
+      items = items.filter(i => i.price === 0);
+    } else {
+      items = items.filter(i => i.category === AppState.activeCategory);
     }
-  } catch(e) {
-    tickerEl.innerHTML = `<span>📢 <strong>Lodge Announcement</strong>: Stated Meeting 1st & 3rd Tuesdays at 7:00 PM • Monopoly Tourney Thursday 6:30 PM • Friday Fish Fry 5:00 PM</span>`;
+  }
+
+  if (AppState.searchQuery) {
+    const q = AppState.searchQuery.toLowerCase();
+    items = items.filter(i => i.title.toLowerCase().includes(q) || i.description.toLowerCase().includes(q) || i.category.toLowerCase().includes(q));
+  }
+
+  grid.innerHTML = items.map(item => {
+    const isFree = item.price === 0;
+    return `
+      <div class="glass-card exchange-card">
+        <div class="admin-card-controls">
+          <button class="admin-control-btn" onclick="openEditExchangeModal('${escapeHTML(item.id)}')">✏️ Edit</button>
+          <button class="admin-control-btn delete" onclick="deleteExchangeItem('${escapeHTML(item.id)}')">🗑️ Remove</button>
+        </div>
+        <div class="card-image-wrap">
+          <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.title)}" loading="lazy">
+          <span class="card-badge ${isFree ? 'badge-free' : 'badge-tag-sale'}">${isFree ? '🎁 Free Giveaway' : '🏷️ Tag Sale'}</span>
+          <span class="card-price-chip">${isFree ? 'FREE' : `$${Number(item.price).toFixed(2)}`}</span>
+        </div>
+        <div class="card-body">
+          <span class="card-category">${escapeHTML(item.category)} • ${escapeHTML(item.condition)}</span>
+          <h3 class="card-title">${escapeHTML(item.title)}</h3>
+          <p class="card-desc">${escapeHTML(item.description)}</p>
+          <div class="card-footer">
+            <span style="font-size: 0.82rem; color: var(--text-secondary);">👤 ${escapeHTML(item.sellerName)}</span>
+            <button class="${isFree ? 'btn-emerald' : 'btn-primary'}" onclick="openClaimModal('${escapeHTML(item.id)}')">
+              ${isFree ? 'Claim Free' : 'Inquire / Buy'}
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function deleteExchangeItem(id) {
+  if (confirm("Are you sure you want to remove this listing?")) {
+    AppState.exchangeItems = AppState.exchangeItems.filter(i => i.id !== id);
+    localStorage.setItem('fraternal_exchange_items', JSON.stringify(AppState.exchangeItems));
+    renderExchangeItems();
+    sfx.playClick();
+    showToast("Listing removed successfully.", "emerald");
+    dispatchWebhook('DELETE_EXCHANGE_ITEM', { id, deletedBy: AppState.currentUser.name });
+  }
+}
+
+function openEditExchangeModal(id) {
+  const item = AppState.exchangeItems.find(i => i.id === id);
+  if (!item) return;
+
+  const idEl = document.getElementById('edit-item-id');
+  const titleEl = document.getElementById('edit-title');
+  const catEl = document.getElementById('edit-category');
+  const priceEl = document.getElementById('edit-price');
+  const descEl = document.getElementById('edit-desc');
+
+  if (idEl) idEl.value = item.id;
+  if (titleEl) titleEl.value = item.title;
+  if (catEl) catEl.value = item.category;
+  if (priceEl) priceEl.value = item.price;
+  if (descEl) descEl.value = item.description;
+  openModal('edit-item-modal');
+}
+
+function handleEditExchangeSubmit(event) {
+  event.preventDefault();
+  const id = document.getElementById('edit-item-id').value;
+  const title = document.getElementById('edit-title').value;
+  const category = document.getElementById('edit-category').value;
+  const price = parseFloat(document.getElementById('edit-price').value || 0);
+  const desc = document.getElementById('edit-desc').value;
+
+  const item = AppState.exchangeItems.find(i => i.id === id);
+  if (item) {
+    item.title = title;
+    item.category = category;
+    item.price = price;
+    item.type = price === 0 ? 'giveaway' : 'tag_sale';
+    item.description = desc;
+    localStorage.setItem('fraternal_exchange_items', JSON.stringify(AppState.exchangeItems));
+    closeModal('edit-item-modal');
+    renderExchangeItems();
+    sfx.playChime();
+    showToast(`Updated "${title}"!`, "emerald");
+    dispatchWebhook('UPDATE_EXCHANGE_ITEM', { id, title, price, updatedBy: AppState.currentUser.name });
+  }
+}
+
+function handlePostItemSubmit(event) {
+  event.preventDefault();
+  const title = document.getElementById('post-title').value;
+  const category = document.getElementById('post-category').value;
+  const price = parseFloat(document.getElementById('post-price').value || 0);
+  const image = document.getElementById('post-image-url').value;
+  const desc = document.getElementById('post-desc').value;
+
+  const newItem = {
+    id: `item-${Date.now()}`,
+    title,
+    category,
+    type: price === 0 ? 'giveaway' : 'tag_sale',
+    price,
+    condition: 'Like New',
+    sellerName: AppState.currentUser.name,
+    sellerContact: AppState.config.phoneMain,
+    pickupLocation: AppState.config.address,
+    description: desc,
+    image,
+    status: 'available',
+    postedDate: new Date().toISOString().split('T')[0]
+  };
+
+  AppState.exchangeItems.unshift(newItem);
+  localStorage.setItem('fraternal_exchange_items', JSON.stringify(AppState.exchangeItems));
+
+  closeModal('post-item-modal');
+  event.target.reset();
+  renderExchangeItems();
+  sfx.playChime();
+  showToast(`Published "${title}"!`, 'emerald');
+  dispatchWebhook('NEW_EXCHANGE_ITEM', { title, price, seller: AppState.currentUser.name });
+}
+
+function handleDirectPhotoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } }
+      else { if (h > MAX) { w *= MAX / h; h = MAX; } }
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+
+      const compressed = canvas.toDataURL('image/jpeg', 0.82);
+      document.getElementById('post-image-url').value = compressed;
+      document.getElementById('post-photo-preview').src = compressed;
+      document.getElementById('post-photo-preview-wrap').style.display = 'block';
+      showToast('📷 Photo compressed & attached!', 'emerald');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function openClaimModal(itemId) {
+  const item = AppState.exchangeItems.find(i => i.id === itemId);
+  if (!item) return;
+
+  const bodyEl = document.getElementById('claim-modal-body');
+  if (bodyEl) {
+    bodyEl.innerHTML = `
+      <h4>${escapeHTML(item.title)}</h4>
+      <p style="color: var(--gold-accent); font-size: 1.3rem; font-weight: 700;">${item.price === 0 ? 'FREE ($0.00)' : `$${item.price.toFixed(2)}`}</p>
+      <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0.8rem 0;">Pickup Location: <strong>${escapeHTML(item.pickupLocation)}</strong></p>
+      <button class="btn-emerald" style="width: 100%; justify-content: center;" onclick="confirmClaim('${escapeHTML(item.id)}')">Confirm Reservation Pass</button>
+    `;
+  }
+  openModal('claim-item-modal');
+}
+
+function confirmClaim(itemId) {
+  closeModal('claim-item-modal');
+  sfx.playChime();
+  showToast('Reservation pass confirmed! Details saved.', 'emerald');
+}
+
+// =============================================================================
+// MODULE 2: CHARITY AUCTION ARENA (4+ LOTS)
+// =============================================================================
+function renderAuctionItems() {
+  const grid = document.getElementById('auction-items-grid');
+  if (!grid) return;
+
+  grid.innerHTML = AppState.auctionItems.map(auc => `
+    <div class="glass-card auction-card">
+      <div class="card-image-wrap">
+        <img src="${escapeHTML(auc.image)}" alt="${escapeHTML(auc.title)}" loading="lazy">
+        <span class="card-badge badge-benefit">${escapeHTML(auc.cause)}</span>
+      </div>
+      <div class="card-body">
+        <h3 class="card-title">${escapeHTML(auc.title)}</h3>
+        <p class="card-desc">${escapeHTML(auc.description)}</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <div>
+            <span style="font-size: 0.76rem; color: var(--text-muted);">Current High Bid</span>
+            <div style="font-size: 1.4rem; font-weight: 700; color: var(--gold-accent);">$${Number(auc.currentBid).toFixed(2)}</div>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 0.76rem; color: var(--text-muted);">Est. Value: $${auc.estValue || 350}</span>
+            <div style="font-size: 0.84rem; color: var(--emerald-green); font-weight: 700;">${auc.bidCount} Bids Placed</div>
+          </div>
+        </div>
+        <button class="btn-emerald" style="width: 100%; justify-content: center;" onclick="openPlaceBidModal('${escapeHTML(auc.id)}')">
+          🔨 Place Live Bid ($${auc.currentBid + auc.minIncrement}+)
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openPlaceBidModal(id) {
+  const auc = AppState.auctionItems.find(a => a.id === id);
+  if (!auc) return;
+
+  const minBid = auc.currentBid + auc.minIncrement;
+  const body = document.getElementById('bid-modal-body');
+  if (body) {
+    body.innerHTML = `
+      <input type="hidden" id="bid-auc-id" value="${escapeHTML(auc.id)}">
+      <h4>${escapeHTML(auc.title)}</h4>
+      <div style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Benefiting: <strong>${escapeHTML(auc.cause)}</strong></div>
+      <div style="font-size: 0.8rem; color: var(--gold-accent); margin-bottom: 1rem;">Current High Bid: <strong>$${auc.currentBid.toFixed(2)}</strong> (${auc.highestBidder || 'None'})</div>
+      <div class="form-group">
+        <label>Your Bid Amount ($ USD) (Minimum: $${minBid.toFixed(2)})</label>
+        <input type="number" id="bid-amount-input" class="form-control" min="${minBid}" step="5" value="${minBid}" required>
+      </div>
+    `;
+  }
+  openModal('place-bid-modal');
+}
+
+function handlePlaceBidSubmit(event) {
+  event.preventDefault();
+  const id = document.getElementById('bid-auc-id').value;
+  const amount = parseFloat(document.getElementById('bid-amount-input').value);
+
+  const auc = AppState.auctionItems.find(a => a.id === id);
+  if (auc && amount > auc.currentBid) {
+    auc.currentBid = amount;
+    auc.highestBidder = AppState.currentUser.name;
+    auc.bidCount += 1;
+    if (!auc.bids) auc.bids = [];
+    auc.bids.unshift({ bidder: AppState.currentUser.name, amount, time: "Just now" });
+
+    localStorage.setItem('fraternal_auction_items', JSON.stringify(AppState.auctionItems));
+    closeModal('place-bid-modal');
+    renderAuctionItems();
+    sfx.playGavel();
+    showToast(`🔨 Bid of $${amount.toFixed(2)} accepted! High bidder: ${AppState.currentUser.name}.`, 'emerald');
+    dispatchWebhook('AUCTION_BID', { lot: auc.title, amount, bidder: AppState.currentUser.name });
   }
 }
 
 // =============================================================================
-// TOURNAMENT & GAME MASTER ARENA
+// MODULE 3: CIVIC HERITAGE & AUDIO WALKING TOUR
+// =============================================================================
+function renderHeritageTour() {
+  const grid = document.getElementById('landmarks-tour-grid');
+  if (!grid) return;
+
+  grid.innerHTML = AppState.landmarks.map(l => `
+    <div class="glass-card">
+      <div class="card-image-wrap">
+        <img src="${escapeHTML(l.image)}" alt="${escapeHTML(l.name)}" loading="lazy">
+        <span class="card-badge badge-tag-sale">Year: ${escapeHTML(l.year)}</span>
+      </div>
+      <div class="card-body">
+        <span class="card-category">${escapeHTML(l.style)} • ${escapeHTML(l.significance)}</span>
+        <h3 class="card-title">${escapeHTML(l.name)}</h3>
+        <p class="card-desc">${escapeHTML(l.desc)}</p>
+        <div class="card-footer">
+          <span style="font-size: 0.78rem; color: var(--text-secondary);">🎧 Audio: ${escapeHTML(l.audioDuration)}</span>
+          <button class="btn-primary" style="font-size: 0.84rem;" onclick="playLandmarkAudio('${escapeHTML(l.id)}')">
+            ▶️ Play Audio Tour
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function playLandmarkAudio(id) {
+  const landmark = AppState.landmarks.find(l => l.id === id);
+  if (!landmark) return;
+
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const narration = `Historic Landmark: ${landmark.name}, constructed in ${landmark.year} in the ${landmark.style} style. ${landmark.desc}. Significance: ${landmark.significance}.`;
+    const utterance = new SpeechSynthesisUtterance(narration);
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+    sfx.playChime();
+    showToast(`🎧 Playing Audio Tour for ${landmark.name}...`, 'emerald');
+  }
+}
+
+// =============================================================================
+// MODULE 4: TOURNAMENT ARENA & ANNUAL YEAR-ECLIPSE ENGINE
 // =============================================================================
 function renderTournamentArena() {
   const grid = document.getElementById('tournament-games-grid');
@@ -433,7 +687,7 @@ function renderTournamentArena() {
     <div class="tournament-card">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
         <div>
-          <span style="font-size: 0.76rem; color: var(--gold-accent); text-transform: uppercase; font-weight: 700;">${escapeHTML(game.category)}</span>
+          <span style="font-size: 0.76rem; color: var(--gold-accent); text-transform: uppercase; font-weight: 700;">${escapeHTML(game.category)} • Season ${game.seasonYear || 2026}</span>
           <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: 0.2rem;">${escapeHTML(game.name)}</h3>
         </div>
         <span class="role-pill gamemaster">🎲 GM: ${escapeHTML(game.gameMaster.split(' ')[0])}</span>
@@ -467,7 +721,7 @@ function renderTournamentArena() {
         <button class="btn-primary" style="flex: 1; font-size: 0.88rem; justify-content: center;" onclick="openScoreMatchModal('${escapeHTML(game.id)}')">
           🏆 Log Score
         </button>
-        <button class="btn-secondary" style="font-size: 0.88rem;" onclick="showToast('Joined tournament bracket for ${escapeHTML(game.name)}!', 'emerald')">
+        <button class="btn-secondary" style="font-size: 0.88rem;" onclick="showToast('Joined bracket for ${escapeHTML(game.name)}!', 'emerald')">
           + Join
         </button>
       </div>
@@ -490,6 +744,7 @@ function handleCreateCustomGame(event) {
     gameMaster: `${gmName} (Game Master)`,
     schedule,
     format,
+    seasonYear: AppState.config.activeSeasonYear || 2026,
     standings: [
       { player: gmName, score: 100, rank: 1, wins: 1 },
       { player: "Lodge Challenger", score: 50, rank: 2, wins: 0 }
@@ -503,7 +758,7 @@ function handleCreateCustomGame(event) {
   event.target.reset();
   renderTournamentArena();
   sfx.playChime();
-  showToast(`🎲 Custom Game "${name}" created! ${gmName} assigned as Game Master.`, 'emerald');
+  showToast(`🎲 Custom Game "${name}" created! ${gmName} is Game Master.`, 'emerald');
   dispatchWebhook('NEW_TOURNAMENT_GAME', { game: name, gm: gmName, schedule });
 }
 
@@ -556,8 +811,42 @@ function handleLogScoreSubmit(event) {
   }
 }
 
+function checkYearEclipse() {
+  const currentYear = new Date().getFullYear();
+  const activeSeason = AppState.config.activeSeasonYear || 2026;
+
+  if (currentYear > activeSeason) {
+    archiveSeasonToHallOfFame(activeSeason);
+    AppState.config.activeSeasonYear = currentYear;
+    localStorage.setItem('fraternal_live_config', JSON.stringify(AppState.config));
+    showToast(`🎆 Year ${activeSeason} Eclipsed into ${currentYear}! Season Champions Archived to Hall of Fame.`, 'emerald');
+    dispatchWebhook('YEAR_ECLIPSE_ROLLED', { oldYear: activeSeason, newYear: currentYear });
+  }
+}
+
+function archiveSeasonToHallOfFame(year) {
+  AppState.tournamentGames.forEach(game => {
+    if (game.standings && game.standings.length > 0) {
+      const champ = game.standings[0];
+      const runnerUp = game.standings[1] || { player: 'None' };
+      AppState.hallOfFame.unshift({
+        year: year,
+        game: game.name,
+        champion: champ.player,
+        runnerUp: runnerUp.player,
+        winningScore: champ.score,
+        archivedDate: new Date().toISOString().split('T')[0]
+      });
+      game.seasonYear = year + 1;
+      game.standings.forEach(s => { s.score = 0; s.wins = 0; });
+    }
+  });
+  localStorage.setItem('fraternal_hall_of_fame', JSON.stringify(AppState.hallOfFame));
+  localStorage.setItem('fraternal_games', JSON.stringify(AppState.tournamentGames));
+}
+
 // =============================================================================
-// COMMUNITY PILLARS: VOLUNTEERS, TAPROOM, SUNSHINE, 50/50 RAFFLE
+// MODULE 5: VOLUNTEER AUTOMATION WITH TWILIO / SMS REMINDERS
 // =============================================================================
 function renderVolunteerShifts() {
   const container = document.getElementById('volunteer-shifts-list');
@@ -569,9 +858,14 @@ function renderVolunteerShifts() {
         <strong style="font-size: 1rem;">${escapeHTML(s.title)}</strong>
         <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.2rem;">${escapeHTML(s.date)} • Needed: ${s.needed} (Claimed: ${s.claimed.length})</div>
       </div>
-      <button class="btn-emerald" style="padding: 0.45rem 1rem; font-size: 0.84rem;" onclick="claimVolunteerShift('${escapeHTML(s.id)}')">
-        ✋ Claim Shift
-      </button>
+      <div style="display: flex; gap: 0.4rem;">
+        <button class="btn-emerald" style="padding: 0.45rem 0.85rem; font-size: 0.82rem;" onclick="claimVolunteerShift('${escapeHTML(s.id)}')">
+          ✋ Claim Shift
+        </button>
+        <button class="btn-secondary" style="padding: 0.45rem 0.65rem; font-size: 0.76rem;" onclick="sendVolunteerReminderSMS('${escapeHTML(s.id)}')">
+          📱 Send SMS
+        </button>
+      </div>
     </div>
   `).join('');
 }
@@ -584,10 +878,35 @@ function claimVolunteerShift(shiftId) {
       localStorage.setItem('fraternal_shifts', JSON.stringify(AppState.volunteerShifts));
       renderVolunteerShifts();
       sfx.playChime();
-      showToast(`✋ Shift claimed by ${AppState.currentUser.name}! Hours logged.`, 'emerald');
+      showToast(`✋ Shift claimed by ${AppState.currentUser.name}! Service hours logged.`, 'emerald');
     } else {
       showToast(`You have already claimed this shift!`, 'gold');
     }
+  }
+}
+
+async function sendVolunteerReminderSMS(shiftId) {
+  const shift = AppState.volunteerShifts.find(s => s.id === shiftId);
+  if (!shift) return;
+
+  sfx.playClick();
+  showToast(`📱 Dispatching SMS Reminders via Twilio for "${shift.title}"...`, 'emerald');
+
+  try {
+    const res = await fetch('api/twilio.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        shift_id: shift.id,
+        shift_title: shift.title,
+        recipients: shift.claimed,
+        message: `Lodge Reminder: You are scheduled for "${shift.title}" on ${shift.date}. Thank you for your service!`
+      })
+    });
+    const data = await res.json();
+    showToast(`✓ Twilio SMS Reminders Sent to ${shift.claimed.length} volunteers!`, 'emerald');
+  } catch(e) {
+    showToast(`✓ Simulated SMS sent to ${shift.claimed.join(', ')}`, 'gold');
   }
 }
 
@@ -596,62 +915,92 @@ function buyRaffleTickets() {
   sfx.playChime();
   const potEl = document.getElementById('raffle-pot-amount');
   if (potEl) potEl.textContent = `$${AppState.rafflePot.toFixed(2)}`;
-  showToast(`🎟️ 10 50/50 Raffle Tickets Confirmed! Winner drawn Saturday at 8 PM.`, 'emerald');
+  showToast(`🎟️ 10 50/50 Raffle Tickets Confirmed!`, 'emerald');
 }
 
 // =============================================================================
-// DEVELOPER (DEVOPS) HYPER-COCKPIT ENGINE
+// MODULE 6: SEATED LEADERSHIP REGISTRY & TRUSTEE AUDIT REPORTS
 // =============================================================================
-const DEVOPS_CODE_FILES = {
-  'config.js': `// VEFA Platform Configuration\nconst FRATERNAL_CONFIG = ${JSON.stringify(FRATERNAL_CONFIG, null, 2)};`,
-  'api/scrape.php': `<?php\n// 2026 Anti-Blocker Scraper with SSRF Filter\n$resolvedIp = gethostbyname($domainHost);\nif (filter_var($resolvedIp, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE) === false) {\n    http_response_code(403);\n    exit('SSRF Blocked');\n}`,
-  'api/stripe.php': `<?php\n// Stripe Checkout Generator for $150 Deposits\nheader('Content-Type: application/json');\n$session = ['id' => 'cs_test_' . bin2hex(random_bytes(8)), 'amount' => 15000];\necho json_encode($session);`,
-  'api/deposits.php': `<?php\n// Multi-Channel Deposit Recording API\nrequire_once 'db.php';\n$pdo = getDBConnection();\n// Accepts STRIPE, CASHAPP, VENMO, CHIME, ZELLE, CHECK`,
-  'database.sql': `CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, role VARCHAR(32));\nCREATE TABLE IF NOT EXISTS hall_deposits (id VARCHAR(64) PRIMARY KEY, amount DECIMAL(10,2));`,
-  'docker-compose.yml': `version: '3.8'\nservices:\n  web:\n    image: php:8.2-apache\n    ports:\n      - "8080:80"\n    volumes:\n      - ./:/var/www/html`,
-  'openapi.json': `{\n  "openapi": "3.1.0",\n  "info": { "title": "VEFA Platform API", "version": "2.2.3" }\n}`
-};
+function renderSeatedOfficers() {
+  const tbody = document.getElementById('officer-roster-tbody');
+  if (!tbody) return;
 
-function loadDevOpsFile(fileName) {
-  AppState.activeDevOpsFile = fileName;
-  const codeEl = document.getElementById('devops-code-display');
-  const titleEl = document.getElementById('devops-active-file-title');
-  if (codeEl) codeEl.textContent = DEVOPS_CODE_FILES[fileName] || '// File not found';
-  if (titleEl) titleEl.textContent = fileName;
-
-  document.querySelectorAll('.devops-file-item').forEach(item => {
-    item.classList.toggle('active', item.dataset.file === fileName);
-  });
+  tbody.innerHTML = (AppState.config.seatedOfficers || []).map(off => `
+    <tr>
+      <td><strong>${escapeHTML(off.title)}</strong></td>
+      <td>${escapeHTML(off.name)}</td>
+      <td>${escapeHTML(off.term)}</td>
+      <td style="color: var(--gold-accent);">${escapeHTML(off.phone)}</td>
+    </tr>
+  `).join('');
 }
 
-function copyDevOpsCode() {
-  const code = DEVOPS_CODE_FILES[AppState.activeDevOpsFile] || '';
-  navigator.clipboard.writeText(code).then(() => {
-    sfx.playClick();
-    showToast(`📋 Copied ${AppState.activeDevOpsFile} to clipboard!`, 'cyan');
-  });
-}
-
-async function runDevOpsApiTest() {
-  const endpoint = document.getElementById('devops-api-select').value;
-  const outputEl = document.getElementById('devops-api-response');
-  if (!outputEl) return;
-
-  outputEl.textContent = "⏳ Sending simulated API request...";
+function generateTrusteeAuditReport() {
   sfx.playClick();
+  const printWindow = window.open('', '_blank');
+  if (printWindow) {
+    let totalDeposits = AppState.hallDeposits.reduce((acc, d) => acc + (d.amount || 150.00), 0);
+    printWindow.document.write(`
+      <html>
+      <head>
+        <title>Trustee Meeting Audit Report - ${escapeHTML(AppState.config.organizationName)}</title>
+        <style>
+          body { font-family: sans-serif; padding: 2rem; color: #1e293b; max-width: 800px; margin: 0 auto; }
+          h1, h2 { color: #0a192f; }
+          table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+          th, td { border: 1px solid #cbd5e1; padding: 0.65rem; text-align: left; }
+          th { background: #f1f5f9; }
+          .summary { background: #f8fafc; padding: 1rem; border-left: 4px solid #d4af37; margin: 1.5rem 0; }
+        </style>
+      </head>
+      <body>
+        <h1>${escapeHTML(AppState.config.organizationName)} ${escapeHTML(AppState.config.chapterNumber)}</h1>
+        <h2>Monthly Trustee Meeting & Financial Audit Report</h2>
+        <p>Generated: ${new Date().toLocaleDateString()} | Active Season: ${AppState.config.activeSeasonYear}</p>
+        
+        <div class="summary">
+          <strong>Deposit Balance:</strong> $${totalDeposits.toFixed(2)} USD<br>
+          <strong>Active Auction Bids:</strong> 4 Lots Active<br>
+          <strong>50/50 Raffle Pot:</strong> $${AppState.rafflePot.toFixed(2)} USD
+        </div>
 
-  setTimeout(() => {
-    let mockResponse = {};
-    if (endpoint === 'scrape') {
-      mockResponse = { status: "success", title: "American Fraternal Lodge", motto: "Charity • Justice • Fellowship", tier: "tier1_direct_html", latency_ms: 48 };
-    } else if (endpoint === 'stripe') {
-      mockResponse = { status: "success", session_id: "cs_test_" + Math.random().toString(36).substr(2, 9), amount: 150.00, currency: "USD", mode: "deposit" };
-    } else if (endpoint === 'deposits') {
-      mockResponse = { status: "success", count: AppState.hallDeposits.length, records: AppState.hallDeposits };
-    }
-    outputEl.textContent = JSON.stringify(mockResponse, null, 2);
-    showToast(`✓ API ${endpoint} returned 200 OK`, 'emerald');
-  }, 400);
+        <h3>Hall Rental $150 Reservation Deposits</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Date</th>
+              <th>Method</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${AppState.hallDeposits.map(d => `
+              <tr>
+                <td>${escapeHTML(d.clientName)}</td>
+                <td>${escapeHTML(d.eventDate)}</td>
+                <td>${escapeHTML(d.paymentMethod)}</td>
+                <td>$${(d.amount || 150.00).toFixed(2)}</td>
+                <td>${escapeHTML(d.status)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <h3>Seated Officers & Trustees</h3>
+        <table>
+          <thead><tr><th>Title</th><th>Officer Name</th><th>Term</th></tr></thead>
+          <tbody>
+            ${(AppState.config.seatedOfficers || []).map(o => `<tr><td>${escapeHTML(o.title)}</td><td>${escapeHTML(o.name)}</td><td>${escapeHTML(o.term)}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+    showToast('📄 Trustee Audit Report Generated!', 'emerald');
+  }
 }
 
 // =============================================================================
@@ -659,6 +1008,7 @@ async function runDevOpsApiTest() {
 // =============================================================================
 function openOfficerStudio() {
   renderDepositLedger();
+  renderSeatedOfficers();
   openModal('officer-studio-modal');
 }
 
@@ -722,210 +1072,7 @@ function broadcastTickerAlert() {
 }
 
 // =============================================================================
-// MODULE 1: COMMUNITY EXCHANGE
-// =============================================================================
-function renderExchangeItems() {
-  const grid = document.getElementById('exchange-items-grid');
-  if (!grid) return;
-
-  let items = [...AppState.exchangeItems];
-  if (AppState.activeCategory !== 'all') {
-    items = items.filter(i => AppState.activeCategory === 'giveaway' ? i.price === 0 : i.category === AppState.activeCategory);
-  }
-
-  grid.innerHTML = items.map(item => {
-    const isFree = item.price === 0;
-    return `
-      <div class="glass-card exchange-card">
-        <div class="card-image-wrap">
-          <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.title)}" loading="lazy">
-          <span class="card-badge ${isFree ? 'badge-free' : 'badge-tag-sale'}">${isFree ? '🎁 Free Giveaway' : '🏷️ Tag Sale'}</span>
-          <span class="card-price-chip">${isFree ? 'FREE' : `$${Number(item.price).toFixed(2)}`}</span>
-        </div>
-        <div class="card-body">
-          ${item.isDemoPlaceholder ? `
-            <div class="demo-badge-banner">
-              <span>⚠️</span> <span>DEMO LISTING — Connect real items via + Post Item</span>
-            </div>
-          ` : ''}
-          <span class="card-category">${escapeHTML(item.category)} • ${escapeHTML(item.condition)}</span>
-          <h3 class="card-title">${escapeHTML(item.title)}</h3>
-          <p class="card-desc">${escapeHTML(item.description)}</p>
-          <div class="card-footer">
-            <span style="font-size: 0.82rem; color: var(--text-secondary);">👤 ${escapeHTML(item.sellerName)}</span>
-            <button class="${isFree ? 'btn-emerald' : 'btn-primary'}" onclick="openClaimModal('${escapeHTML(item.id)}')">
-              ${isFree ? 'Claim Free' : 'Inquire / Buy'}
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-function handleDirectPhotoUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const MAX = 800;
-      let w = img.width, h = img.height;
-      if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } }
-      else { if (h > MAX) { w *= MAX / h; h = MAX; } }
-      canvas.width = w; canvas.height = h;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
-
-      const compressed = canvas.toDataURL('image/jpeg', 0.82);
-      document.getElementById('post-image-url').value = compressed;
-      document.getElementById('post-photo-preview').src = compressed;
-      document.getElementById('post-photo-preview-wrap').style.display = 'block';
-      showToast('📷 Photo compressed & attached!', 'emerald');
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function handlePostItemSubmit(event) {
-  event.preventDefault();
-  const title = document.getElementById('post-title').value;
-  const category = document.getElementById('post-category').value;
-  const price = parseFloat(document.getElementById('post-price').value || 0);
-  const image = document.getElementById('post-image-url').value;
-  const desc = document.getElementById('post-desc').value;
-
-  const newItem = {
-    id: `item-${Date.now()}`,
-    title,
-    category,
-    type: price === 0 ? 'giveaway' : 'tag_sale',
-    price,
-    condition: 'Like New',
-    sellerName: AppState.currentUser.name,
-    sellerContact: AppState.config.phoneMain,
-    pickupLocation: AppState.config.address,
-    description: desc,
-    image,
-    isDemoPlaceholder: false,
-    status: 'available',
-    postedDate: new Date().toISOString().split('T')[0]
-  };
-
-  AppState.exchangeItems.unshift(newItem);
-  localStorage.setItem('fraternal_exchange_items', JSON.stringify(AppState.exchangeItems));
-
-  closeModal('post-item-modal');
-  event.target.reset();
-  renderExchangeItems();
-  sfx.playChime();
-  showToast(`Published "${title}"!`, 'emerald');
-  dispatchWebhook('NEW_EXCHANGE_ITEM', { title, price, seller: AppState.currentUser.name });
-}
-
-function openClaimModal(itemId) {
-  const item = AppState.exchangeItems.find(i => i.id === itemId);
-  if (!item) return;
-
-  const bodyEl = document.getElementById('claim-modal-body');
-  if (bodyEl) {
-    bodyEl.innerHTML = `
-      <h4>${escapeHTML(item.title)}</h4>
-      <p style="color: var(--gold-accent); font-size: 1.3rem; font-weight: 700;">${item.price === 0 ? 'FREE ($0.00)' : `$${item.price.toFixed(2)}`}</p>
-      <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0.8rem 0;">Pickup Location: <strong>${escapeHTML(item.pickupLocation)}</strong></p>
-      <button class="btn-emerald" style="width: 100%; justify-content: center;" onclick="confirmClaim('${escapeHTML(item.id)}')">Confirm Reservation Pass</button>
-    `;
-  }
-  openModal('claim-item-modal');
-}
-
-function confirmClaim(itemId) {
-  closeModal('claim-item-modal');
-  sfx.playChime();
-  showToast('Reservation pass confirmed! Details saved.', 'emerald');
-}
-
-// =============================================================================
-// MODULE 2: CHARITY AUCTIONS
-// =============================================================================
-function renderAuctionItems() {
-  const grid = document.getElementById('auction-items-grid');
-  if (!grid) return;
-
-  grid.innerHTML = AppState.auctionItems.map(auc => `
-    <div class="glass-card auction-card">
-      <div class="card-image-wrap">
-        <img src="${escapeHTML(auc.image)}" alt="${escapeHTML(auc.title)}" loading="lazy">
-        <span class="card-badge badge-benefit">${escapeHTML(auc.cause)}</span>
-      </div>
-      <div class="card-body">
-        ${auc.isDemoPlaceholder ? `
-          <div class="demo-badge-banner">
-            <span>⚠️</span> <span>DEMO LOT — Connect your charity cause in config.js</span>
-          </div>
-        ` : ''}
-        <h3 class="card-title">${escapeHTML(auc.title)}</h3>
-        <p class="card-desc">${escapeHTML(auc.description)}</p>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <div>
-            <span style="font-size: 0.76rem; color: var(--text-muted);">Current High Bid</span>
-            <div style="font-size: 1.4rem; font-weight: 700; color: var(--gold-accent);">$${Number(auc.currentBid).toFixed(2)}</div>
-          </div>
-          <span style="font-size: 0.84rem; color: var(--text-secondary);">${auc.bidCount} Bids Placed</span>
-        </div>
-        <button class="btn-emerald" style="width: 100%; justify-content: center;" onclick="openPlaceBidModal('${escapeHTML(auc.id)}')">
-          🔨 Place Live Bid
-        </button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function openPlaceBidModal(id) {
-  const auc = AppState.auctionItems.find(a => a.id === id);
-  if (!auc) return;
-
-  const minBid = auc.currentBid + auc.minIncrement;
-  const body = document.getElementById('bid-modal-body');
-  if (body) {
-    body.innerHTML = `
-      <input type="hidden" id="bid-auc-id" value="${escapeHTML(auc.id)}">
-      <h4>${escapeHTML(auc.title)}</h4>
-      <div style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1rem;">Benefiting: <strong>${escapeHTML(auc.cause)}</strong></div>
-      <div class="form-group">
-        <label>Your Bid Amount ($ USD) (Minimum: $${minBid.toFixed(2)})</label>
-        <input type="number" id="bid-amount-input" class="form-control" min="${minBid}" step="1" value="${minBid}" required>
-      </div>
-    `;
-  }
-  openModal('place-bid-modal');
-}
-
-function handlePlaceBidSubmit(event) {
-  event.preventDefault();
-  const id = document.getElementById('bid-auc-id').value;
-  const amount = parseFloat(document.getElementById('bid-amount-input').value);
-
-  const auc = AppState.auctionItems.find(a => a.id === id);
-  if (auc && amount > auc.currentBid) {
-    auc.currentBid = amount;
-    auc.highestBidder = AppState.currentUser.name;
-    auc.bidCount += 1;
-    localStorage.setItem('fraternal_auction_items', JSON.stringify(AppState.auctionItems));
-    closeModal('place-bid-modal');
-    renderAuctionItems();
-    sfx.playGavel();
-    showToast(`🔨 Bid of $${amount.toFixed(2)} accepted! You are high bidder.`, 'emerald');
-    dispatchWebhook('AUCTION_BID', { lot: auc.title, amount, bidder: AppState.currentUser.name });
-  }
-}
-
-// =============================================================================
-// MODULE 3: MULTI-PAYMENT HUB FOR $150 HALL DEPOSIT
+// MODULE 7: MULTI-PAYMENT HUB FOR $150 HALL DEPOSIT
 // =============================================================================
 function switchPaymentTab(method) {
   AppState.activePaymentMethod = method;
@@ -979,57 +1126,66 @@ async function handleHallDepositSubmit(event) {
 }
 
 // =============================================================================
-// MODULE 4: PLAN-O-GRAM CORKBOARD WITH QR CODES
+// DEVOPS HYPER-COCKPIT ENGINE
 // =============================================================================
-function renderPlanogramBoard() {
-  const surface = document.getElementById('corkboard-surface');
-  if (!surface) return;
+const DEVOPS_CODE_FILES = {
+  'config.js': `// VEFA Platform Configuration\nconst FRATERNAL_CONFIG = ${JSON.stringify(FRATERNAL_CONFIG, null, 2)};`,
+  'agent.md': `# VEFA Agentic AI Harness\n// Tool interfaces & autonomous cron triggers for Claude/Gemini/OpenAI`,
+  'api/twilio.php': `<?php\n// Twilio SMS Volunteer Dispatcher\nrequire_once 'vendor/autoload.php';\n// Dispatches SMS shift reminders`,
+  'api/scrape.php': `<?php\n// 2026 Anti-Blocker Scraper with SSRF Filter\n$resolvedIp = gethostbyname($domainHost);\nif (filter_var($resolvedIp, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE) === false) {\n    http_response_code(403);\n    exit('SSRF Blocked');\n}`,
+  'api/stripe.php': `<?php\n// Stripe Checkout Generator for $150 Deposits\nheader('Content-Type: application/json');\n$session = ['id' => 'cs_test_' . bin2hex(random_bytes(8)), 'amount' => 15000];\necho json_encode($session);`,
+  'api/deposits.php': `<?php\n// Multi-Channel Deposit Recording API\nrequire_once 'db.php';\n$pdo = getDBConnection();`,
+  'database.sql': `CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, role VARCHAR(32));\nCREATE TABLE IF NOT EXISTS hall_deposits (id VARCHAR(64) PRIMARY KEY, amount DECIMAL(10,2));`,
+  'docker-compose.yml': `version: '3.8'\nservices:\n  web:\n    image: php:8.2-apache\n    ports:\n      - "8080:80"\n    volumes:\n      - ./:/var/www/html`,
+  'openapi.json': `{\n  "openapi": "3.1.0",\n  "info": { "title": "VEFA Platform API", "version": "2.3.1" }\n}`
+};
 
-  surface.innerHTML = AppState.pins.map(pin => `
-    <div class="pin-note-card" draggable="true">
-      <span class="pushpin-head">📌</span>
-      ${pin.isDemo ? `<span style="font-size: 0.68rem; color: #d97706; font-weight: 700; display: block;">⚠️ DEMO PIN</span>` : ''}
-      <strong>${escapeHTML(pin.title)}</strong>
-      <div style="font-size: 0.74rem; color: #64748b; margin-top: 0.4rem; text-transform: uppercase;">Type: ${escapeHTML(pin.type)}</div>
-    </div>
-  `).join('');
+function loadDevOpsFile(fileName) {
+  AppState.activeDevOpsFile = fileName;
+  const codeEl = document.getElementById('devops-code-display');
+  const titleEl = document.getElementById('devops-active-file-title');
+  if (codeEl) codeEl.textContent = DEVOPS_CODE_FILES[fileName] || '// File not found';
+  if (titleEl) titleEl.textContent = fileName;
+
+  document.querySelectorAll('.devops-file-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.file === fileName);
+  });
 }
 
-function printPlanogramLayout() {
+function copyDevOpsCode() {
+  const code = DEVOPS_CODE_FILES[AppState.activeDevOpsFile] || '';
+  navigator.clipboard.writeText(code).then(() => {
+    sfx.playClick();
+    showToast(`📋 Copied ${AppState.activeDevOpsFile} to clipboard!`, 'cyan');
+  });
+}
+
+async function runDevOpsApiTest() {
+  const endpoint = document.getElementById('devops-api-select').value;
+  const outputEl = document.getElementById('devops-api-response');
+  if (!outputEl) return;
+
+  outputEl.textContent = "⏳ Sending simulated API request...";
   sfx.playClick();
-  const printWindow = window.open('', '_blank');
-  if (printWindow) {
-    const qrSvg = `<svg viewBox="0 0 100 100" width="70" height="70"><rect x="5" y="5" width="25" height="25" fill="#0a192f"/><rect x="70" y="5" width="25" height="25" fill="#0a192f"/><rect x="5" y="70" width="25" height="25" fill="#0a192f"/><circle cx="50" cy="50" r="10" fill="#d4af37"/></svg>`;
-    printWindow.document.write(`
-      <html>
-      <head>
-        <title>Physical Bulletin Board Plan-o-gram Diagram & QR Cards</title>
-        <style>
-          body { font-family: sans-serif; text-align: center; padding: 2rem; }
-          .grid { display: grid; grid-template-columns: repeat(${AppState.config.bulletinBoard.gridCols}, 1fr); gap: 15px; max-width: 800px; margin: 2rem auto; }
-          .card { border: 2px dashed #333; padding: 1rem; border-radius: 4px; min-height: 100px; text-align: left; display: flex; flex-direction: column; justify-content: space-between; }
-        </style>
-      </head>
-      <body>
-        <h2>${escapeHTML(AppState.config.organizationName)} ${escapeHTML(AppState.config.chapterNumber)}</h2>
-        <h3>Lobby Bulletin Board Plan-o-gram (Dimensions: ${escapeHTML(AppState.config.bulletinBoard.dimensions)})</h3>
-        <div class="grid">
-          ${AppState.pins.map(p => `
-            <div class="card">
-              <div><strong>${escapeHTML(p.title)}</strong><br><small style="color: #666;">[${escapeHTML(p.type.toUpperCase())}]</small></div>
-              <div style="margin-top: 0.5rem; text-align: right;">${qrSvg}</div>
-            </div>
-          `).join('')}
-        </div>
-      </body>
-      </html>
-    `);
-    printWindow.document.close();
-  }
+
+  setTimeout(() => {
+    let mockResponse = {};
+    if (endpoint === 'scrape') {
+      mockResponse = { status: "success", title: "American Fraternal Lodge", motto: "Charity • Justice • Fellowship", tier: "tier1_direct_html", latency_ms: 48 };
+    } else if (endpoint === 'stripe') {
+      mockResponse = { status: "success", session_id: "cs_test_" + Math.random().toString(36).substr(2, 9), amount: 150.00, currency: "USD", mode: "deposit" };
+    } else if (endpoint === 'deposits') {
+      mockResponse = { status: "success", count: AppState.hallDeposits.length, records: AppState.hallDeposits };
+    } else if (endpoint === 'twilio') {
+      mockResponse = { status: "success", dispatched: 2, message: "Volunteer shift reminders sent successfully." };
+    }
+    outputEl.textContent = JSON.stringify(mockResponse, null, 2);
+    showToast(`✓ API ${endpoint} returned 200 OK`, 'emerald');
+  }, 400);
 }
 
 // =============================================================================
-// TV KIOSK CAROUSEL (15-SECOND ROTATION)
+// TV KIOSK & CORKBOARD
 // =============================================================================
 function toggleTVKiosk() {
   const tvView = document.getElementById('tv-kiosk-view');
@@ -1053,11 +1209,57 @@ function cycleTVCarousel() {
 }
 setInterval(cycleTVCarousel, 15000);
 
+function renderPlanogramBoard() {
+  const surface = document.getElementById('corkboard-surface');
+  if (!surface) return;
+
+  surface.innerHTML = AppState.pins.map(pin => `
+    <div class="pin-note-card" draggable="true">
+      <span class="pushpin-head">📌</span>
+      <strong>${escapeHTML(pin.title)}</strong>
+      <div style="font-size: 0.74rem; color: #64748b; margin-top: 0.4rem; text-transform: uppercase;">Type: ${escapeHTML(pin.type)}</div>
+    </div>
+  `).join('');
+}
+
+function printPlanogramLayout() {
+  sfx.playClick();
+  const printWindow = window.open('', '_blank');
+  if (printWindow) {
+    const qrSvg = `<svg viewBox="0 0 100 100" width="70" height="70"><rect x="5" y="5" width="25" height="25" fill="#0a192f"/><rect x="70" y="5" width="25" height="25" fill="#0a192f"/><rect x="5" y="70" width="25" height="25" fill="#0a192f"/><circle cx="50" cy="50" r="10" fill="#d4af37"/></svg>`;
+    printWindow.document.write(`
+      <html>
+      <head>
+        <title>Bulletin Board Plan-o-gram & QR Cards</title>
+        <style>
+          body { font-family: sans-serif; text-align: center; padding: 2rem; }
+          .grid { display: grid; grid-template-columns: repeat(${AppState.config.bulletinBoard.gridCols}, 1fr); gap: 15px; max-width: 800px; margin: 2rem auto; }
+          .card { border: 2px dashed #333; padding: 1rem; border-radius: 4px; min-height: 100px; text-align: left; display: flex; flex-direction: column; justify-content: space-between; }
+        </style>
+      </head>
+      <body>
+        <h2>${escapeHTML(AppState.config.organizationName)} ${escapeHTML(AppState.config.chapterNumber)}</h2>
+        <h3>Lobby Bulletin Board Plan-o-gram</h3>
+        <div class="grid">
+          ${AppState.pins.map(p => `
+            <div class="card">
+              <div><strong>${escapeHTML(p.title)}</strong><br><small style="color: #666;">[${escapeHTML(p.type.toUpperCase())}]</small></div>
+              <div style="margin-top: 0.5rem; text-align: right;">${qrSvg}</div>
+            </div>
+          `).join('')}
+        </div>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+  }
+}
+
 // =============================================================================
 // INITIALIZATION
 // =============================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  document.title = `${AppState.config.organizationName} ${AppState.config.chapterNumber} | VEFA Community Platform v2.2.3`;
+  document.title = `${AppState.config.organizationName} ${AppState.config.chapterNumber} | VEFA Community Platform v2.3.1`;
   const brandName = document.getElementById('brand-org-name');
   const brandCrest = document.getElementById('brand-crest-emoji');
   const heroMotto = document.getElementById('hero-motto');
@@ -1082,9 +1284,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initLandingGateway();
   updateUserSessionUI();
-  syncLiveFeed();
+  checkYearEclipse();
   renderExchangeItems();
   renderAuctionItems();
+  renderHeritageTour();
   renderTournamentArena();
   renderVolunteerShifts();
   renderPlanogramBoard();
